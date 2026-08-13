@@ -1,6 +1,7 @@
 import { getConfig } from './config.js';
 import { logger } from './logger.js';
 import { createServer } from './server.js';
+import { closeStores } from './store/factory.js';
 
 function main(): void {
 	let config;
@@ -24,7 +25,9 @@ function main(): void {
 	const shutdown = ( signal: string ): void => {
 		logger.info( 'Shutting down', { signal } );
 
-		server.close( () => process.exit( 0 ) );
+		server.close( () => {
+			void closeStores().finally( () => process.exit( 0 ) );
+		} );
 
 		// Do not let a hung connection block the shutdown indefinitely.
 		setTimeout( () => process.exit( 0 ), 10_000 ).unref();

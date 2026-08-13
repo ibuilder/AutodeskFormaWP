@@ -39,11 +39,15 @@ Three properties fall out of this split:
 | WordPress Plugin Check (all categories, severity 1, experimental) | No errors, no warnings |
 | WordPress Coding Standards (WPCS 3, `WordPress` ruleset) | Clean |
 | PHP compatibility | 7.4 – 8.4 |
-| Plugin integration suite (live WordPress, real REST dispatch) | 225 assertions passing |
-| Backend unit tests | 44 passing |
+| Plugin integration suite (single site) | 228 assertions passing |
+| Plugin integration suite (multisite network) | 251 assertions passing |
+| Backend tests | 62 passing |
+| Storage contract (JSON file store and PostgreSQL) | Both pass the same contract |
 | Cross-language signature interop (Node signer ↔ PHP verifier) | Byte-identical |
 
-The plugin suite runs against a real WordPress install rather than mocks, so REST dispatch, capabilities, cron, the object cache and the uninstall routine all behave as they do in production. It covers signature and replay handling, rate limiting, schema validation, idempotency, asset pruning, XSS neutralisation, the media allow list (including bypass attempts), scheduled events, log retention and uninstall.
+The plugin suite runs against a real WordPress install rather than mocks, so REST dispatch, capabilities, cron, the object cache and the uninstall routine all behave as they do in production. It covers signature and replay handling, rate limiting, schema validation, idempotency, asset pruning, XSS neutralisation, the media allow list (including bypass attempts), scheduled events, log retention and uninstall. On a network install it additionally proves per-site isolation of content and credentials, and that uninstall reaches every site.
+
+The Autodesk client is covered by contract tests against recorded Autodesk Platform Services response shapes — JSON:API, with file versions carried in `included` and linked through `relationships.tip`. To validate against your own tenant, see [live verification](#live-verification).
 
 ## Quick start
 
@@ -134,6 +138,25 @@ The full model is documented in [docs/security.md](docs/security.md). In short:
 - Signature comparison is constant time, and unknown key IDs spend comparable work so timing cannot confirm whether a key exists.
 - Remote media import is off by default and, when enabled, restricted to an explicit host allow list.
 - WordPress holds no Autodesk credential of any kind.
+
+## Live verification
+
+The automated suites prove the code against recorded Autodesk responses. To prove it against your own tenant:
+
+```bash
+cd backend && npm run verify
+```
+
+It reads your configuration, obtains a token, lists your hubs and projects, builds a canonical payload from the first one, checks it against the shared schema, and round-trips a signed request to WordPress. It reports which stage works and which does not, warns on clock drift, and **performs no writes**. Exits non-zero if any check fails.
+
+## Storage
+
+| Setting | Behaviour |
+|---|---|
+| `DATABASE_URL` unset | JSON file store in `DATA_DIR`. Fine for a single process. |
+| `DATABASE_URL` set | PostgreSQL. Mutations take a row lock inside a transaction, so the service is safe to run as more than one instance. |
+
+Both implementations satisfy the same contract test, including a concurrency case that asserts no update is lost. The PostgreSQL store additionally proves that a second instance observes the first one's writes — the property the file store cannot provide.
 
 ## Documentation
 

@@ -65,10 +65,14 @@ export class ApsClient {
 					lastModifiedTime?: string;
 					extension?: { type?: string };
 				};
+				relationships?: {
+					tip?: { data?: { id?: string } };
+				};
 			}>;
 			included?: Array<{
 				id: string;
-				attributes?: { storageSize?: number; mimeType?: string; name?: string };
+				type?: string;
+				attributes?: { storageSize?: number; mimeType?: string; name?: string; fileType?: string };
 			}>;
 		}>(
 			`/data/v1/projects/${ encodeURIComponent( projectId ) }/folders/${ encodeURIComponent(
@@ -76,10 +80,17 @@ export class ApsClient {
 			) }/contents`
 		);
 
-		const sizes = new Map<string, { storageSize?: number; mimeType?: string }>();
+		/*
+		 * Size and MIME type live on the version resources in `included`, not on
+		 * the items in `data`. Their identifiers differ: an item is a
+		 * `dm.lineage` urn while its version is an `fs.file` urn with a version
+		 * query. The link between them is the item's `relationships.tip`, so
+		 * matching on the item id alone finds nothing against real responses.
+		 */
+		const versions = new Map<string, { storageSize?: number; mimeType?: string }>();
 
 		for ( const included of body.included ?? [] ) {
-			sizes.set( included.id, {
+			versions.set( included.id, {
 				...( included.attributes?.storageSize !== undefined
 					? { storageSize: included.attributes.storageSize }
 					: {} ),
@@ -89,12 +100,18 @@ export class ApsClient {
 
 		return ( body.data ?? [] )
 			.filter( ( entry ) => entry.type === 'items' )
-			.map( ( entry ) => ( {
-				id: entry.id,
-				name: entry.attributes?.displayName ?? entry.attributes?.name ?? entry.id,
-				lastModifiedTime: entry.attributes?.lastModifiedTime,
-				...( sizes.get( entry.id ) ?? {} ),
-			} ) );
+			.map( ( entry ) => {
+				const tipId = entry.relationships?.tip?.data?.id;
+				// Fall back to the item id for responses that inline the version.
+				const version = ( tipId ? versions.get( tipId ) : undefined ) ?? versions.get( entry.id ) ?? {};
+
+				return {
+					id: entry.id,
+					name: entry.attributes?.displayName ?? entry.attributes?.name ?? entry.id,
+					lastModifiedTime: entry.attributes?.lastModifiedTime,
+					...version,
+				};
+			} );
 	}
 
 	/**

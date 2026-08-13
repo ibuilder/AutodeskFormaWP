@@ -77,6 +77,22 @@ class Signature {
 	const RATE_LIMIT = 60;
 
 	/**
+	 * Maximum unverified requests accepted from one address per minute.
+	 *
+	 * @since 1.0.0
+	 * @var int
+	 */
+	const UNVERIFIED_RATE_LIMIT = 20;
+
+	/**
+	 * Transient prefix used for the unverified request limiter.
+	 *
+	 * @since 1.0.0
+	 * @var string
+	 */
+	const UNVERIFIED_PREFIX = 'forma_pub_u_';
+
+	/**
 	 * Settings reader.
 	 *
 	 * @since 1.0.0
@@ -123,12 +139,50 @@ class Signature {
 	/**
 	 * Verifies the signature on a REST request.
 	 *
+	 * Rate limiting is deliberately split in two. Requests that fail to
+	 * authenticate are charged to the origin address, and only requests that do
+	 * authenticate are charged to the connection. Charging failures to the
+	 * connection would let anyone who learns a key id exhaust that connection's
+	 * budget and lock the real backend out.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @param \WP_REST_Request $request Inbound request.
 	 * @return string|\WP_Error Verified connection key id, or an error.
 	 */
 	public function verify( \WP_REST_Request $request ) {
+		$allowed = $this->check_unverified_rate_limit();
+
+		if ( is_wp_error( $allowed ) ) {
+			return $allowed;
+		}
+
+		$result = $this->authenticate( $request );
+
+		if ( is_wp_error( $result ) ) {
+			$code = $result->get_error_code();
+
+			/*
+			 * A replay or a connection rate limit means the signature was valid,
+			 * so those must not be charged to the origin address.
+			 */
+			if ( 'forma_publisher_replayed_request' !== $code && 'forma_publisher_rate_limited' !== $code ) {
+				$this->record_unverified_failure();
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Performs the actual signature checks.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \WP_REST_Request $request Inbound request.
+	 * @return string|\WP_Error Verified connection key id, or an error.
+	 */
+	private function authenticate( \WP_REST_Request $request ) {
 		if ( $this->settings->get( 'require_https' ) && ! is_ssl() && ! $this->is_local_request() ) {
 			return new \WP_Error(
 				'forma_publisher_https_required',
@@ -167,12 +221,6 @@ class Signature {
 				__( 'The request timestamp is not a valid Unix timestamp.', 'forma-publisher' ),
 				array( 'status' => 401 )
 			);
-		}
-
-		$rate = $this->check_rate_limit( $key_id );
-
-		if ( is_wp_error( $rate ) ) {
-			return $rate;
 		}
 
 		$tolerance = (int) $this->settings->get( 'timestamp_tolerance', 300 );
@@ -218,6 +266,13 @@ class Signature {
 			);
 		}
 
+		// Only a verified request is charged to the connection's budget.
+		$rate = $this->check_rate_limit( $key_id );
+
+		if ( is_wp_error( $rate ) ) {
+			return $rate;
+		}
+
 		if ( ! $this->consume_nonce( $key_id, $nonce, $tolerance ) ) {
 			return new \WP_Error(
 				'forma_publisher_replayed_request',
@@ -227,6 +282,98 @@ class Signature {
 		}
 
 		return $key_id;
+	}
+
+	/**
+	 * Limits unverified requests by origin address.
+	 *
+	 * Only `REMOTE_ADDR` is used. Forwarded-for headers are attacker controlled
+	 * unless a trusted proxy rewrites them, so trusting one here would make the
+	 * limiter trivially bypassable.
+	 *
+	 * The address is hashed before it is used as a cache key, so no raw address
+	 * is written to storage.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return true|\WP_Error True when under the limit.
+	 */
+	private function check_unverified_rate_limit() {
+		$limit = $this->unverified_limit();
+
+		if ( $limit <= 0 ) {
+			return true;
+		}
+
+		$count = get_transient( $this->unverified_key() );
+		$count = false === $count ? 0 : (int) $count;
+
+		if ( $count >= $limit ) {
+			return new \WP_Error(
+				'forma_publisher_unverified_rate_limited',
+				__( 'Too many unauthenticated requests. Please retry shortly.', 'forma-publisher' ),
+				array( 'status' => 429 )
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Charges one failed authentication attempt to the origin address.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	private function record_unverified_failure() {
+		if ( $this->unverified_limit() <= 0 ) {
+			return;
+		}
+
+		$key   = $this->unverified_key();
+		$count = get_transient( $key );
+		$count = false === $count ? 0 : (int) $count;
+
+		set_transient( $key, $count + 1, 2 * MINUTE_IN_SECONDS );
+	}
+
+	/**
+	 * Returns the configured unverified request limit.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return int Requests allowed per address per minute. Zero disables the limiter.
+	 */
+	private function unverified_limit() {
+		/**
+		 * Filters the number of failed authentication attempts accepted per
+		 * address per minute. Return zero to disable the limiter.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param int $limit Failed attempts allowed per minute.
+		 */
+		return (int) apply_filters( 'forma_publisher_unverified_rate_limit', self::UNVERIFIED_RATE_LIMIT );
+	}
+
+	/**
+	 * Builds the transient key for the current origin address and window.
+	 *
+	 * Only `REMOTE_ADDR` is used. Forwarded-for headers are attacker controlled
+	 * unless a trusted proxy rewrites them, so trusting one would make the
+	 * limiter trivially bypassable. The address is hashed before use as a key,
+	 * so no raw address is written to storage.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Transient key.
+	 */
+	private function unverified_key() {
+		$remote = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+		$window = (int) floor( time() / MINUTE_IN_SECONDS );
+
+		return self::UNVERIFIED_PREFIX . md5( $remote . '|' . $window );
 	}
 
 	/**

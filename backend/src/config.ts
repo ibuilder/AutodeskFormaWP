@@ -14,6 +14,12 @@ const schema = z.object( {
 	DATA_DIR: z.string().min( 1 ).default( './data' ),
 
 	/**
+	 * PostgreSQL connection string. When set, it replaces the JSON file store
+	 * and makes the service safe to run as more than one instance.
+	 */
+	DATABASE_URL: z.string().min( 1 ).optional(),
+
+	/**
 	 * 32 byte key, hex or base64 encoded, used to encrypt Autodesk tokens at
 	 * rest. Generate with: openssl rand -hex 32
 	 */

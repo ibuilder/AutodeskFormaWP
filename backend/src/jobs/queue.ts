@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { getConfig } from '../config.js';
 import { logger } from '../logger.js';
-import { JsonStore } from '../store/json-store.js';
+import { createStore } from '../store/factory.js';
+import type { DocumentStore } from '../store/document-store.js';
 import { WordPressClient, WordPressError } from '../wordpress/client.js';
 import { SCHEMA_VERSION, type CanonicalPayload, type Operation } from '../canonical/schema.js';
 import type { CanonicalProject } from '../canonical/schema.js';
@@ -65,7 +66,7 @@ const MAX_HISTORY = 500;
  * intentionally small so that substitution is straightforward.
  */
 export class PublishQueue {
-	private readonly store: JsonStore<JobFile>;
+	private readonly store: DocumentStore<JobFile>;
 	private readonly client: WordPressClient;
 	private running = false;
 	private readonly waiting: string[] = [];
@@ -73,7 +74,7 @@ export class PublishQueue {
 	constructor( client?: WordPressClient ) {
 		const config = getConfig();
 
-		this.store = new JsonStore<JobFile>( config.DATA_DIR, 'jobs', { jobs: [], published: {} } );
+		this.store = createStore<JobFile>( 'jobs', { jobs: [], published: {} } );
 		this.client = client ?? new WordPressClient();
 	}
 

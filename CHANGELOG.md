@@ -6,7 +6,34 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Security
+
+- **A known key id could lock out the real backend.** Rate limiting was applied
+  before signature verification and charged to the connection, so anyone who
+  learned a key id could exhaust that connection's budget with forged requests
+  and deny service to the genuine backend. Limiting is now split: failed
+  authentication is charged to the origin address, and only verified requests
+  count against the connection. Proven by a test that fires 25 forged requests
+  and then asserts the real backend still succeeds.
+
 ### Fixed
+
+- **Autodesk file size and MIME type were never resolved.** The Data Management
+  client matched entries in the response's `included` array by item id, but
+  those entries are version resources with different urns (`dm.lineage:…` for an
+  item versus `fs.file:vf.…?version=1` for its version). Against real responses
+  nothing ever matched, so every asset silently lost its size and MIME type and
+  fell back to extension-only kind inference. The client now follows
+  `relationships.tip` to the correct version. Caught by new contract tests
+  against recorded Autodesk response shapes.
+- **`JsonStore.read()` handed out its internal cache object**, so a caller that
+  mutated the result would corrupt state that a later unrelated write would
+  persist. Reads now return a copy, which also makes the file store and the
+  PostgreSQL store behave identically. Caught by the shared storage contract
+  test.
+- **`uninstall.php` could fatal if included twice**, aborting an uninstall part
+  way through and leaving a site with half its plugin data removed. The
+  declarations are now guarded.
 
 - **Changing the sync refresh interval had no effect.** `Scheduler::ensure_events()`
   checked only whether a cron event existed, not what its recurrence was, so
@@ -38,10 +65,30 @@ All notable changes to this project are documented here. The format follows
 - **Hub and project browsing** in the Forma extension, replacing manual-only
   identifier entry. Manual entry is retained as a fallback.
 
+- **PostgreSQL storage.** Setting `DATABASE_URL` replaces the JSON file store
+  with a PostgreSQL one whose mutations take a row lock inside a transaction,
+  making the service safe to run as more than one instance. Both stores satisfy
+  the same contract test, including concurrency, and CI runs the suite against a
+  real PostgreSQL service.
+- **Multisite coverage.** A network suite proves per-site isolation of content
+  and credentials, that a credential from one site is rejected on another, and
+  that uninstall reaches every site while preserving published content.
+- **Contract tests for the Autodesk client** against recorded Autodesk Platform
+  Services response shapes, covering hubs, projects, top folders, folder
+  contents, version linking, canonical assembly and error handling.
+- **`npm run verify`**, a live verification command that exercises the whole
+  pipeline against real credentials without publishing anything, and reports
+  which stage works. Warns on clock drift and on assets that resolve no size or
+  MIME type.
+
 ### Changed
 
 - The backend and extension now require Node.js 22.6+. Node 20 reached end of
   life in April 2026 and cannot run the TypeScript test files.
+- Rate limiting is now two tiered: `forma_publisher_unverified_rate_limit`
+  (default 20 failed attempts per address per minute) and the existing
+  `forma_publisher_rate_limit` (default 60 verified requests per connection per
+  minute).
 
 ## [1.0.0]
 

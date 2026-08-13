@@ -1,5 +1,6 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
+import type { DocumentStore } from './document-store.js';
 
 /**
  * A small, dependency free persistence layer.
@@ -10,7 +11,7 @@ import { dirname, join, resolve } from 'node:path';
  * cycles. Swap this class for a real database in a production deployment; the
  * repository classes only depend on the methods below.
  */
-export class JsonStore<T extends object> {
+export class JsonStore<T extends object> implements DocumentStore<T> {
 	private readonly file: string;
 	private readonly fallback: T;
 	private cache: T | null = null;
@@ -21,7 +22,20 @@ export class JsonStore<T extends object> {
 		this.fallback = fallback;
 	}
 
+	/**
+	 * Returns a copy of the stored document.
+	 *
+	 * The copy matters: handing out the internal cache would let a caller mutate
+	 * it in place, and that mutation would then be written to disk by the next
+	 * unrelated `mutate()` call. It also keeps this store's observable behaviour
+	 * identical to the PostgreSQL one, which necessarily returns fresh objects.
+	 */
 	async read(): Promise<T> {
+		return structuredClone( await this.load() );
+	}
+
+	/** Loads the document into the cache and returns the live object. */
+	private async load(): Promise<T> {
 		if ( this.cache ) {
 			return this.cache;
 		}
@@ -48,7 +62,7 @@ export class JsonStore<T extends object> {
 	 */
 	async mutate<R>( mutator: ( state: T ) => R | Promise<R> ): Promise<R> {
 		const run = this.queue.then( async () => {
-			const state = await this.read();
+			const state = await this.load();
 			const result = await mutator( state );
 
 			await this.persist( state );

@@ -52,6 +52,12 @@ $forma_publisher_suites = array(
 	'test-lifecycle.php',
 );
 
+// The multisite suite tears down both sites, so it runs after everything else.
+if ( is_multisite() ) {
+	$forma_publisher_suites[] = 'test-multisite.php';
+	echo "Network install detected; the multisite suite will run.\n";
+}
+
 foreach ( $forma_publisher_suites as $forma_publisher_suite ) {
 	$forma_publisher_path = $forma_publisher_tests_dir . '/' . $forma_publisher_suite;
 

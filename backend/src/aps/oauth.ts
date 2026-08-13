@@ -2,7 +2,8 @@ import { createHash, randomBytes } from 'node:crypto';
 import { getConfig } from '../config.js';
 import { logger } from '../logger.js';
 import { decrypt, encrypt } from '../security/crypto.js';
-import { JsonStore } from '../store/json-store.js';
+import { createStore } from '../store/factory.js';
+import type { DocumentStore } from '../store/document-store.js';
 
 /**
  * Autodesk Platform Services OAuth.
@@ -32,11 +33,11 @@ interface PendingAuth {
 const pending = new Map<string, PendingAuth>();
 
 export class ApsOAuth {
-	private readonly store: JsonStore<TokenFile>;
+	private readonly store: DocumentStore<TokenFile>;
 
 	constructor() {
 		const config = getConfig();
-		this.store = new JsonStore<TokenFile>( config.DATA_DIR, 'aps-tokens', { users: {} } );
+		this.store = createStore<TokenFile>( 'aps-tokens', { users: {} } );
 	}
 
 	/** Builds the authorization URL and remembers the PKCE verifier. */

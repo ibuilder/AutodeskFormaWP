@@ -143,6 +143,122 @@ ok(
 	'first status: ' . $statuses[0]
 );
 
+group( 'Security: a forged key id cannot lock out the real backend' );
+
+/*
+ * The important property: hammering the endpoint with a known key id but an
+ * invalid signature must not consume the genuine connection's budget. Failures
+ * are charged to the origin address instead.
+ */
+$victim = make_connection( 'Lockout victim' );
+
+$connection_limit = static function () {
+	return 5;
+};
+
+$generous_unverified = static function () {
+	return 1000;
+};
+
+add_filter( 'forma_publisher_rate_limit', $connection_limit );
+add_filter( 'forma_publisher_unverified_rate_limit', $generous_unverified );
+
+for ( $i = 0; $i < 25; $i++ ) {
+	rest_do_request(
+		signed_request(
+			'POST',
+			$route,
+			wp_json_encode( payload( unique_source( 'forged' . $i ) ) ),
+			$victim['key_id'],
+			'attacker-guessed-the-key-id-but-not-the-secret'
+		)
+	);
+}
+
+$legitimate = rest_do_request(
+	signed_request(
+		'POST',
+		$route,
+		wp_json_encode( payload( unique_source( 'legit' ) ) ),
+		$victim['key_id'],
+		$victim['secret']
+	)
+);
+
+same(
+	'the real backend still gets through after 25 forged attempts',
+	200,
+	$legitimate->get_status()
+);
+
+remove_filter( 'forma_publisher_rate_limit', $connection_limit );
+remove_filter( 'forma_publisher_unverified_rate_limit', $generous_unverified );
+
+group( 'Security: unauthenticated flooding is throttled' );
+
+$tight_unverified = static function () {
+	return 3;
+};
+
+add_filter( 'forma_publisher_unverified_rate_limit', $tight_unverified );
+
+$flood_statuses = array();
+
+for ( $i = 0; $i < 6; $i++ ) {
+	$flood_statuses[] = rest_do_request(
+		signed_request(
+			'POST',
+			$route,
+			wp_json_encode( payload( unique_source( 'flood' . $i ) ) ),
+			'fp_unknownkey',
+			'not-the-secret'
+		)
+	)->get_status();
+}
+
+ok(
+	'repeated failures are eventually throttled',
+	in_array( 429, $flood_statuses, true ),
+	'statuses: ' . implode( ',', $flood_statuses )
+);
+
+remove_filter( 'forma_publisher_unverified_rate_limit', $tight_unverified );
+
+// Clear the window so later groups are unaffected by this flood.
+delete_transient( 'forma_pub_u_' . md5( ( isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '' ) . '|' . (int) floor( time() / MINUTE_IN_SECONDS ) ) );
+
+group( 'Security: successful requests are not charged as failures' );
+
+$clean_connection = make_connection( 'Clean traffic' );
+
+$strict_unverified = static function () {
+	return 2;
+};
+
+add_filter( 'forma_publisher_unverified_rate_limit', $strict_unverified );
+
+$clean_statuses = array();
+
+for ( $i = 0; $i < 6; $i++ ) {
+	$clean_statuses[] = rest_do_request(
+		signed_request(
+			'POST',
+			$route,
+			wp_json_encode( payload( unique_source( 'clean' . $i ) ) ),
+			$clean_connection['key_id'],
+			$clean_connection['secret']
+		)
+	)->get_status();
+}
+
+remove_filter( 'forma_publisher_unverified_rate_limit', $strict_unverified );
+
+ok(
+	'valid traffic is never charged against the unverified limiter',
+	! in_array( 429, $clean_statuses, true ),
+	'statuses: ' . implode( ',', $clean_statuses )
+);
+
 group( 'Security: constant defined connections' );
 
 // FORMA_PUBLISHER_CONNECTIONS is defined by the runner before WordPress loads

@@ -42,10 +42,24 @@ Autodesk identifiers are URNs containing colons. Placing one in a path segment f
 |---|---|
 | Timestamp tolerance | Configurable, default 300s. Outside the window, the request is rejected as stale. |
 | Nonce store | Each nonce is remembered for twice the tolerance. A repeat returns HTTP 409. |
-| Rate limit | 60 requests per connection per minute by default, filterable via `forma_publisher_rate_limit`. |
+| Unverified rate limit | 20 **failed** authentications per origin address per minute, filterable via `forma_publisher_unverified_rate_limit`. |
+| Connection rate limit | 60 **verified** requests per connection per minute, filterable via `forma_publisher_rate_limit`. |
 | HTTPS enforcement | On by default; loopback hosts are exempt so local development still works. |
 | Constant-time comparison | `hash_equals` in PHP, `timingSafeEqual` in Node. |
 | Unknown-key handling | An unknown key ID still performs a comparable HMAC computation, so response timing does not confirm whether a key exists. |
+
+### Why rate limiting is split in two
+
+A single limiter keyed on the connection is a denial-of-service hole. Key IDs are not secrets — they travel in a header on every request and are shown in the admin — so anyone who learns one could send forged requests until that connection's budget was gone, locking the genuine backend out.
+
+So failures and successes are counted separately:
+
+- A request that **fails** to authenticate is charged to its origin address. Flooding costs the attacker their own budget.
+- A request that **authenticates** is charged to the connection. Legitimate traffic never accrues a penalty from someone else's forgeries.
+
+Only `REMOTE_ADDR` is used for the address. Forwarded-for headers are attacker controlled unless a trusted proxy rewrites them, so honouring one would make the limiter trivially bypassable. If you terminate TLS at a proxy, configure it to set `REMOTE_ADDR` correctly, and apply your own per-IP limits there as well. The address is hashed before use as a cache key, so no raw address is stored.
+
+This is covered by a test that fires 25 forged requests against a known key ID and then asserts the real backend still succeeds.
 
 ## Input handling
 
