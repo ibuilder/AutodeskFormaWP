@@ -145,6 +145,40 @@ foreach ( $expected as $entry ) {
 	ok( 'the plugin directory contains ' . $entry, file_exists( FORMA_PUBLISHER_DIR . $entry ) );
 }
 
+group( 'Packaging: translations' );
+
+/*
+ * The Domain Path header has to point at a directory that actually ships. An
+ * empty directory is not tracked by git, so it would exist locally and be
+ * missing from a fresh checkout and from the release archive.
+ */
+$domain_path = ltrim( $headers['DomainPath'], '/' );
+
+ok(
+	'the Domain Path header points at an existing directory',
+	'' !== $domain_path && is_dir( FORMA_PUBLISHER_DIR . $domain_path ),
+	FORMA_PUBLISHER_DIR . $domain_path
+);
+
+$pot = FORMA_PUBLISHER_DIR . $domain_path . '/forma-publisher.pot';
+
+ok( 'a translation template ships', is_readable( $pot ), $pot );
+
+if ( is_readable( $pot ) ) {
+	$pot_contents = (string) file_get_contents( $pot ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading a bundled file in a test.
+
+	ok(
+		'the translation template declares the plugin text domain',
+		false !== strpos( $pot_contents, 'forma-publisher' )
+	);
+
+	ok(
+		'the translation template contains translatable strings',
+		substr_count( $pot_contents, "\nmsgid " ) > 50,
+		'msgid count: ' . substr_count( $pot_contents, "\nmsgid " )
+	);
+}
+
 group( 'Packaging: block metadata' );
 
 foreach ( array( 'project-list', 'project', 'metrics', 'assets' ) as $block ) {

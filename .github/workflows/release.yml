@@ -75,7 +75,7 @@ jobs:
           build-dir: './wordpress-plugin/forma-publisher'
 
       - name: Upload the archive as a build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: forma-publisher-plugin
           path: dist/*.zip
