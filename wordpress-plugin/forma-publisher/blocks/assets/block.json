@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "forma-publisher/assets",
+	"version": "1.0.0",
+	"title": "Forma Assets",
+	"category": "forma-publisher",
+	"icon": "portfolio",
+	"description": "Displays the files and images published for a Forma project.",
+	"keywords": [ "forma", "autodesk", "assets", "files" ],
+	"textdomain": "forma-publisher",
+	"attributes": {
+		"projectId": { "type": "string", "default": "" },
+		"kind": { "type": "string", "default": "" },
+		"limit": { "type": "number", "default": 50 }
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide" ],
+		"spacing": { "margin": true, "padding": true }
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

@@ -1,0 +1,24 @@
+{
+	"name": "forma-to-wordpress-extension",
+	"version": "1.0.0",
+	"description": "Autodesk Forma embedded view for selecting, previewing and publishing project content to WordPress.",
+	"license": "GPL-2.0-or-later",
+	"private": true,
+	"type": "module",
+	"engines": {
+		"node": ">=20.11"
+	},
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc --noEmit && vite build",
+		"preview": "vite preview",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"forma-embedded-view-sdk": "^0.75.0"
+	},
+	"devDependencies": {
+		"typescript": "^5.7.3",
+		"vite": "^6.0.7"
+	}
+}

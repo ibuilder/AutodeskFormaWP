@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build output
+dist/
+build/
+
+# Runtime data and secrets
+.env
+.env.*
+!.env.example
+backend/data/
+
+# Tooling
+.phpcs.cache
+*.log
+coverage/
+.cache/
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

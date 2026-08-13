@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<ruleset name="Forma Publisher">
+	<description>WordPress coding standards for the Forma Publisher plugin.</description>
+
+	<file>forma-publisher</file>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<arg name="basepath" value="."/>
+	<arg name="colors"/>
+	<arg name="parallel" value="8"/>
+	<arg value="ps"/>
+
+	<rule ref="WordPress">
+		<!-- The plugin ships no build step, so file names follow the class map. -->
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+	</rule>
+
+	<!--
+		WordPress itself requires the `<script>.asset.php` naming convention for
+		block script metadata, so these file names cannot use hyphens.
+	-->
+	<rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+		<exclude-pattern>*.asset.php</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="forma_manage_settings"/>
+				<element value="forma_view_logs"/>
+				<element value="edit_forma_project"/>
+				<element value="read_forma_project"/>
+				<element value="delete_forma_project"/>
+				<element value="edit_forma_projects"/>
+				<element value="edit_others_forma_projects"/>
+				<element value="publish_forma_projects"/>
+				<element value="read_private_forma_projects"/>
+				<element value="delete_forma_projects"/>
+				<element value="edit_forma_asset"/>
+				<element value="read_forma_asset"/>
+				<element value="edit_forma_assets"/>
+				<element value="edit_forma_logs"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="forma-publisher"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="forma_publisher"/>
+				<element value="Forma_Publisher"/>
+				<element value="FORMA_PUBLISHER"/>
+			</property>
+		</properties>
+	</rule>
+
+	<config name="minimum_wp_version" value="6.4"/>
+	<config name="testVersion" value="7.4-"/>
+
+	<rule ref="PHPCompatibilityWP"/>
+</ruleset>

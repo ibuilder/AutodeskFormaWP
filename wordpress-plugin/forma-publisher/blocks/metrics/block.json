@@ -1,0 +1,25 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "forma-publisher/metrics",
+	"version": "1.0.0",
+	"title": "Forma Metrics",
+	"category": "forma-publisher",
+	"icon": "chart-bar",
+	"description": "Displays the published analysis metrics for a Forma project.",
+	"keywords": [ "forma", "autodesk", "metrics" ],
+	"textdomain": "forma-publisher",
+	"attributes": {
+		"projectId": { "type": "string", "default": "" },
+		"category": { "type": "string", "default": "" },
+		"keys": { "type": "string", "default": "" },
+		"layout": { "type": "string", "default": "table" }
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide" ],
+		"spacing": { "margin": true, "padding": true }
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}
