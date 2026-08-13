@@ -18,6 +18,9 @@ backend/data/
 coverage/
 .cache/
 
+# Throwaway WordPress provisioned by tests/setup-wp.sh
+wordpress-plugin/.wp-test/
+
 # Editors and OS
 .DS_Store
 Thumbs.db

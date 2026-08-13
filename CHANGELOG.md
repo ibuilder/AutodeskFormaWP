@@ -80,6 +80,12 @@ All notable changes to this project are documented here. The format follows
   pipeline against real credentials without publishing anything, and reports
   which stage works. Warns on clock drift and on assets that resolve no size or
   MIME type.
+- **Release packaging.** `bin/build-zip.sh` builds an installable archive, and a
+  release workflow refuses to publish when the tag does not match the plugin
+  version, re-inspects the archive for stray development files and runs Plugin
+  Check against it. A packaging suite asserts agreement between the plugin
+  header, the readme stable tag, the declared PHP and WordPress minimums, the
+  changelog entry and each block's declared version.
 
 ### Changed
 

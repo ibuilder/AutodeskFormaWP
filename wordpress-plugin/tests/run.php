@@ -44,6 +44,7 @@ echo 'WordPress ' . get_bloginfo( 'version' ) . ' | PHP ' . PHP_VERSION . ' | pl
  * deliberately tears options and capabilities down, so it runs last.
  */
 $forma_publisher_suites = array(
+	'test-packaging.php',
 	'test-settings.php',
 	'test-security.php',
 	'test-ingest.php',

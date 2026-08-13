@@ -36,7 +36,6 @@ export class ApsOAuth {
 	private readonly store: DocumentStore<TokenFile>;
 
 	constructor() {
-		const config = getConfig();
 		this.store = createStore<TokenFile>( 'aps-tokens', { users: {} } );
 	}
 

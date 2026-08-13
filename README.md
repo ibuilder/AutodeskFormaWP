@@ -39,8 +39,8 @@ Three properties fall out of this split:
 | WordPress Plugin Check (all categories, severity 1, experimental) | No errors, no warnings |
 | WordPress Coding Standards (WPCS 3, `WordPress` ruleset) | Clean |
 | PHP compatibility | 7.4 – 8.4 |
-| Plugin integration suite (single site) | 228 assertions passing |
-| Plugin integration suite (multisite network) | 251 assertions passing |
+| Plugin integration suite (single site) | 303 assertions passing |
+| Plugin integration suite (multisite network) | 326 assertions passing |
 | Backend tests | 62 passing |
 | Storage contract (JSON file store and PostgreSQL) | Both pass the same contract |
 | Cross-language signature interop (Node signer ↔ PHP verifier) | Byte-identical |
@@ -184,6 +184,16 @@ cd forma-extension && npm run build
 The integration suite exits non-zero on any failed assertion, so it gates CI. To run it against a WordPress install you already have, activate the plugin there and run `wp eval-file tests/run.php`.
 
 CI runs all of the above plus the official WordPress Plugin Check action, a PHP 7.4–8.4 syntax matrix, and the integration suite on PHP 7.4, 8.3 and 8.4.
+
+## Releasing
+
+```bash
+cd wordpress-plugin && ./bin/build-zip.sh
+```
+
+Produces an installable `forma-publisher-<version>.zip`. Development tooling lives outside the plugin directory by design, so nothing has to be stripped and none of it can be shipped by accident — a packaging suite asserts exactly that, along with agreement between the plugin header version, the readme stable tag, the declared PHP and WordPress minimums, and each block's declared version.
+
+Pushing a `v*` tag runs the release workflow, which refuses to proceed if the tag does not match the plugin version, rebuilds the archive, re-inspects it for stray files, runs Plugin Check against it and attaches it to a GitHub release.
 
 ## Licence
 

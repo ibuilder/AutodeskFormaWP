@@ -1,0 +1,93 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Build and validate the archive without publishing a release'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Build and validate the plugin archive
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Check the tag against the plugin version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          VERSION="$(sed -n 's/^[[:space:]]*\*[[:space:]]*Version:[[:space:]]*\(.*\)$/\1/p' \
+            wordpress-plugin/forma-publisher/forma-publisher.php | head -n1 | tr -d '[:space:]')"
+
+          if [ "${TAG}" != "${VERSION}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match plugin version ${VERSION}." >&2
+            exit 1
+          fi
+
+          echo "Releasing version ${VERSION}."
+
+      - name: Build the archive
+        working-directory: wordpress-plugin
+        run: |
+          chmod +x bin/build-zip.sh
+          ./bin/build-zip.sh "${GITHUB_WORKSPACE}/dist"
+
+      - name: Confirm no development files were shipped
+        run: |
+          cd "${GITHUB_WORKSPACE}/dist"
+          ARCHIVE="$(ls *.zip)"
+          echo "Inspecting ${ARCHIVE}"
+
+          if unzip -l "${ARCHIVE}" | grep -Eq '(/tests/|/node_modules/|/vendor/|composer\.(json|lock)|phpcs\.xml|\.env)'; then
+            echo "The archive contains development files." >&2
+            unzip -l "${ARCHIVE}"
+            exit 1
+          fi
+
+          # Every path must sit under the plugin slug so it installs correctly.
+          if unzip -l "${ARCHIVE}" | awk 'NR>3 && $4 != "" && $4 !~ /^forma-publisher\// { print $4; found=1 } END { exit !found }'; then
+            echo "The archive contains paths outside the plugin directory." >&2
+            exit 1
+          fi
+
+          echo "Archive contents look correct."
+
+      - name: Run Plugin Check against the built plugin
+        uses: wordpress/plugin-check-action@v1
+        with:
+          build-dir: './wordpress-plugin/forma-publisher'
+
+      - name: Upload the archive as a build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: forma-publisher-plugin
+          path: dist/*.zip
+          if-no-files-found: error
+
+      - name: Publish the release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/*.zip \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "${GITHUB_REF_NAME}" \
+            --notes "Installable WordPress plugin archive for ${GITHUB_REF_NAME}. See CHANGELOG.md for details." \
+            --verify-tag
