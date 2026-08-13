@@ -5,8 +5,8 @@
 | Component | Requirement |
 |---|---|
 | WordPress | 6.4+, PHP 7.4+ |
-| Backend | Node.js 20.11+ |
-| Extension | Node.js 20.11+ for the build; any modern browser at runtime |
+| Backend | Node.js 22.6+ |
+| Extension | Node.js 22.6+ for the build; any modern browser at runtime |
 | Autodesk | An APS application with a registered callback URL |
 
 ## 1. WordPress plugin

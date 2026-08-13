@@ -29,7 +29,7 @@ Three properties fall out of this split:
 | Component | Directory | Stack |
 |---|---|---|
 | Forma embedded extension | [`forma-extension/`](forma-extension) | TypeScript, Vite, `forma-embedded-view-sdk` |
-| Backend service | [`backend/`](backend) | Node 20+, TypeScript, Express, Zod |
+| Backend service | [`backend/`](backend) | Node 22+, TypeScript, Express, Zod |
 | WordPress plugin | [`wordpress-plugin/forma-publisher/`](wordpress-plugin/forma-publisher) | PHP 7.4+, WordPress 6.4+ |
 
 ## Status
