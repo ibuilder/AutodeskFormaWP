@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { ApsClient } from '../aps/client.js';
 import type { ApsOAuth } from '../aps/oauth.js';
 import { OPERATIONS, projectSchema } from '../canonical/schema.js';
+import { applyTemplate, getTemplate, TEMPLATES } from '../canonical/templates.js';
 import { toCanonicalProject } from '../canonical/transform.js';
 import type { PublishQueue } from '../jobs/queue.js';
 import { logger } from '../logger.js';
@@ -14,12 +15,14 @@ const buildSchema = z.object( {
 	proposalId: z.string().min( 1 ).optional(),
 	includeFiles: z.boolean().default( true ),
 	overrides: z.record( z.unknown() ).optional(),
+	template: z.string().min( 1 ).optional(),
 } );
 
 const publishSchema = z.object( {
 	operation: z.enum( OPERATIONS ).default( 'publish' ),
 	mode: z.enum( [ 'snapshot', 'sync' ] ).default( 'snapshot' ),
 	force: z.boolean().default( false ),
+	template: z.string().min( 1 ).optional(),
 	/** Either a fully formed canonical project, or a source descriptor to build one. */
 	project: projectSchema.optional(),
 	source: buildSchema.optional(),
@@ -35,6 +38,10 @@ function fail( error: unknown ): { status: number; body: { error: string; messag
 export function apiRoutes( oauth: ApsOAuth, queue: PublishQueue ): Router {
 	const router = Router();
 	const aps = new ApsClient( oauth );
+
+	router.get( '/templates', ( _req, res ) => {
+		res.json( { templates: TEMPLATES } );
+	} );
 
 	router.get( '/hubs', async ( _req, res ) => {
 		try {
@@ -64,6 +71,14 @@ export function apiRoutes( oauth: ApsOAuth, queue: PublishQueue ): Router {
 			return;
 		}
 
+		const template = getTemplate( parsed.data.template );
+
+		if ( ! template ) {
+			res.status( 400 ).json( { error: 'unknown_template', message: 'That publishing template does not exist.' } );
+
+			return;
+		}
+
 		try {
 			const source = await aps.buildSourceProject( {
 				hubId: parsed.data.hubId,
@@ -73,7 +88,10 @@ export function apiRoutes( oauth: ApsOAuth, queue: PublishQueue ): Router {
 				...( parsed.data.overrides ? { overrides: parsed.data.overrides } : {} ),
 			} );
 
-			res.json( { project: toCanonicalProject( source ) } );
+			res.json( {
+				project: applyTemplate( toCanonicalProject( source ), template ),
+				template: template.id,
+			} );
 		} catch ( error ) {
 			const { status, body } = fail( error );
 			res.status( status ).json( body );
@@ -99,6 +117,14 @@ export function apiRoutes( oauth: ApsOAuth, queue: PublishQueue ): Router {
 			return;
 		}
 
+		const template = getTemplate( parsed.data.template );
+
+		if ( ! template ) {
+			res.status( 400 ).json( { error: 'unknown_template', message: 'That publishing template does not exist.' } );
+
+			return;
+		}
+
 		try {
 			let project = parsed.data.project;
 
@@ -120,11 +146,21 @@ export function apiRoutes( oauth: ApsOAuth, queue: PublishQueue ): Router {
 				return;
 			}
 
+			/*
+			 * The template is applied here as well as in /preview, so a caller
+			 * that posts a hand-built project cannot bypass the constraints the
+			 * chosen template expresses.
+			 */
+			project = applyTemplate( project, template );
+
 			const job = await queue.enqueue( {
 				operation: parsed.data.operation,
 				project,
 				mode: parsed.data.mode,
 				force: parsed.data.force,
+				// Retaining the descriptor is what makes an unattended sync
+				// refresh possible later, without the extension being open.
+				...( parsed.data.source ? { source: parsed.data.source } : {} ),
 			} );
 
 			res.status( 202 ).json( { job } );

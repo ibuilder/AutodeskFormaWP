@@ -4,6 +4,45 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **Changing the sync refresh interval had no effect.** `Scheduler::ensure_events()`
+  checked only whether a cron event existed, not what its recurrence was, so
+  switching from hourly to daily saved the setting while the event kept firing
+  hourly indefinitely. The recurrence is now compared and the event rescheduled
+  when it differs. Caught by a new regression test.
+
+### Added
+
+- Integration test suite for the WordPress plugin: 225 assertions run against a
+  real WordPress install through WP-CLI, covering signature and replay handling,
+  rate limiting, schema validation, idempotency, asset pruning, XSS
+  neutralisation, the media allow list and its bypass attempts, scheduled
+  events, log retention, capabilities and the uninstall routine. Exits non-zero
+  on failure so it gates CI, and runs on PHP 7.4, 8.3 and 8.4.
+- `tests/setup-wp.sh` provisions a throwaway WordPress with the SQLite drop-in,
+  making the suite reproducible locally and in CI.
+- Backend unit tests for the publish queue (retry, backoff ceiling, fail-fast on
+  non-retryable responses, idempotency short-circuit, source retention) and for
+  publishing templates.
+- **Sync mode now actually refreshes.** The backend previously acknowledged a
+  refresh request and did nothing. It now stores a source descriptor with each
+  published project, rebuilds every sync-mode project from Autodesk on refresh,
+  re-applies the original template and enqueues an update.
+- **Publishing templates**: `full`, `summary`, `metrics`, `sustainability` and
+  `downloads` presets that constrain which parts of a project reach WordPress.
+  Applied in both preview and publish so a hand-built payload cannot bypass
+  them, and re-applied on every sync refresh.
+- **Hub and project browsing** in the Forma extension, replacing manual-only
+  identifier entry. Manual entry is retained as a fallback.
+
+### Changed
+
+- The backend and extension now require Node.js 22.6+. Node 20 reached end of
+  life in April 2026 and cannot run the TypeScript test files.
+
 ## [1.0.0]
 
 Initial release of all three components.

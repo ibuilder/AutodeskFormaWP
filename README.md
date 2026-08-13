@@ -39,9 +39,11 @@ Three properties fall out of this split:
 | WordPress Plugin Check (all categories, severity 1, experimental) | No errors, no warnings |
 | WordPress Coding Standards (WPCS 3, `WordPress` ruleset) | Clean |
 | PHP compatibility | 7.4 – 8.4 |
-| Plugin functional suite (WP 7.0.4, live REST dispatch) | 72 assertions passing |
-| Backend unit tests | 21 passing |
+| Plugin integration suite (live WordPress, real REST dispatch) | 225 assertions passing |
+| Backend unit tests | 44 passing |
 | Cross-language signature interop (Node signer ↔ PHP verifier) | Byte-identical |
+
+The plugin suite runs against a real WordPress install rather than mocks, so REST dispatch, capabilities, cron, the object cache and the uninstall routine all behave as they do in production. It covers signature and replay handling, rate limiting, schema validation, idempotency, asset pruning, XSS neutralisation, the media allow list (including bypass attempts), scheduled events, log retention and uninstall.
 
 ## Quick start
 
@@ -92,9 +94,23 @@ Host the built output and register it as an embedded view in your Forma extensio
 | Mode | Behaviour |
 |---|---|
 | **Snapshot** (default) | Content is copied into WordPress at publish time. Fast, editorially stable, no live dependency on Autodesk. |
-| **Sync** | A source-to-target link is retained. WordPress asks the backend to re-push on a schedule. |
+| **Sync** | A source-to-target link is retained. WordPress asks the backend to re-push on a schedule, and the backend rebuilds each project from Autodesk unattended. |
 
 Snapshot is the default deliberately: it removes live front-end dependence on Autodesk auth and reduces operational risk for a public site.
+
+## Publishing templates
+
+A template is a pre-mapped view of a project that decides which parts of the payload actually reach WordPress. Editors pick one instead of hand-selecting fields on every publish.
+
+| Template | Publishes |
+|---|---|
+| `full` | Description, every metric, all assets and the thumbnail |
+| `summary` | Title, summary and thumbnail only |
+| `metrics` | Summary plus the full metric table, no downloads |
+| `sustainability` | Only environment and carbon metrics, for public reporting |
+| `downloads` | Summary plus the asset list, no analysis figures |
+
+Templates only ever remove or constrain content — they never invent fields, so a template can be reasoned about as a filter over the canonical payload. The chosen template is stored with the project and **re-applied on every scheduled sync refresh**, so an unattended refresh can never widen what a page exposes.
 
 ## Rendering
 
@@ -132,6 +148,9 @@ The full model is documented in [docs/security.md](docs/security.md). In short:
 # WordPress coding standards
 cd wordpress-plugin && composer install && vendor/bin/phpcs
 
+# WordPress integration suite — provisions a throwaway WordPress with SQLite
+cd wordpress-plugin && ./tests/setup-wp.sh
+
 # Backend
 cd backend && npm test
 
@@ -139,7 +158,9 @@ cd backend && npm test
 cd forma-extension && npm run build
 ```
 
-CI runs all of the above plus the official WordPress Plugin Check action and a PHP 7.4–8.4 syntax matrix.
+The integration suite exits non-zero on any failed assertion, so it gates CI. To run it against a WordPress install you already have, activate the plugin there and run `wp eval-file tests/run.php`.
+
+CI runs all of the above plus the official WordPress Plugin Check action, a PHP 7.4–8.4 syntax matrix, and the integration suite on PHP 7.4, 8.3 and 8.4.
 
 ## Licence
 

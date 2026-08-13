@@ -1,8 +1,10 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import { timingSafeEqual } from 'node:crypto';
+import { ApsClient } from './aps/client.js';
 import { ApsOAuth } from './aps/oauth.js';
 import { getConfig } from './config.js';
 import { PublishQueue } from './jobs/queue.js';
+import { refreshSyncProjects } from './jobs/refresh.js';
 import { logger } from './logger.js';
 import { apiRoutes } from './routes/api.js';
 import { authRoutes } from './routes/auth.js';
@@ -90,15 +92,11 @@ export function createServer(): express.Express {
 			return;
 		}
 
-		// Re-publishing is queued asynchronously so WordPress cron returns fast.
+		// Rebuilding runs asynchronously so the WordPress cron request returns
+		// immediately rather than blocking on Autodesk for every project.
 		void ( async () => {
 			try {
-				const published = await queue.published();
-				const sourceIds = Object.values( published )
-					.filter( ( entry ) => entry.mode === 'sync' )
-					.map( ( entry ) => entry.sourceId );
-
-				logger.info( 'Refresh requested by WordPress', { syncProjects: sourceIds.length } );
+				await refreshSyncProjects( new ApsClient( oauth ), queue );
 			} catch ( error ) {
 				logger.error( 'Refresh handling failed', {
 					error: error instanceof Error ? error.message : String( error ),

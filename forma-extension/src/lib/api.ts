@@ -51,6 +51,13 @@ export interface PublishJob {
 	result?: Record< string, unknown >;
 }
 
+export interface PublishTemplate {
+	id: string;
+	label: string;
+	description: string;
+	defaultStatus: string;
+}
+
 export interface BackendSettings {
 	baseUrl: string;
 	apiKey: string;
@@ -124,11 +131,16 @@ export class BackendClient {
 		return this.request( 'GET', `/api/hubs/${ encodeURIComponent( hubId ) }/projects` );
 	}
 
+	templates(): Promise< { templates: PublishTemplate[] } > {
+		return this.request( 'GET', '/api/templates' );
+	}
+
 	preview( source: {
 		hubId: string;
 		projectId: string;
 		proposalId?: string;
 		includeFiles: boolean;
+		template?: string;
 		overrides?: Record< string, unknown >;
 	} ): Promise< { project: CanonicalProject } > {
 		return this.request( 'POST', '/api/preview', source );
@@ -138,6 +150,7 @@ export class BackendClient {
 		operation: string;
 		mode: string;
 		force?: boolean;
+		template?: string;
 		project?: CanonicalProject;
 		source?: Record< string, unknown >;
 	} ): Promise< { job: PublishJob } > {

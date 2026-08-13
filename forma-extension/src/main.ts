@@ -6,6 +6,7 @@ import {
 	saveSettings,
 	type CanonicalProject,
 	type PublishJob,
+	type PublishTemplate,
 } from './lib/api.js';
 import { readFormaContext, type FormaContext } from './lib/forma.js';
 
@@ -23,6 +24,11 @@ interface State {
 	mode: 'snapshot' | 'sync';
 	postStatus: 'draft' | 'publish' | 'pending' | 'private';
 	backendConnected: boolean | null;
+	hubs: Array< { id: string; name: string } >;
+	projects: Array< { id: string; name: string } >;
+	templates: PublishTemplate[];
+	template: string;
+	browsing: boolean;
 }
 
 const state: State = {
@@ -37,6 +43,11 @@ const state: State = {
 	mode: 'snapshot',
 	postStatus: 'draft',
 	backendConnected: null,
+	hubs: [],
+	projects: [],
+	templates: [],
+	template: 'full',
+	browsing: false,
 };
 
 const client = new BackendClient( state.settings );
@@ -120,6 +131,67 @@ function renderContent(): HTMLElement {
 
 	panel.append( intro );
 
+	// Browsing pulls the hub and project lists from Autodesk through the
+	// backend. It needs a connected Autodesk session, so the manual fields
+	// below stay available as a fallback.
+	const browseRow = element( 'div', { className: 'row' } );
+	const browseButton = element( 'button', {
+		className: 'action secondary',
+		text: state.hubs.length > 0 ? 'Reload hubs' : 'Browse Autodesk hubs',
+	} );
+	browseButton.disabled = state.busy || state.browsing;
+	browseButton.addEventListener( 'click', () => void loadHubs() );
+	browseRow.append( browseButton );
+	panel.append( browseRow );
+
+	if ( state.hubs.length > 0 ) {
+		const hubSelect = element( 'select' );
+		const placeholder = element( 'option', { text: '— Select a hub —' } );
+		placeholder.value = '';
+		hubSelect.append( placeholder );
+
+		for ( const hub of state.hubs ) {
+			const option = element( 'option', { text: hub.name } );
+			option.value = hub.id;
+			option.selected = state.context.hubId === hub.id;
+			hubSelect.append( option );
+		}
+
+		hubSelect.addEventListener( 'change', () => {
+			state.context.hubId = hubSelect.value;
+			state.context.projectId = '';
+			state.projects = [];
+
+			if ( hubSelect.value ) {
+				void loadProjects( hubSelect.value );
+			} else {
+				render();
+			}
+		} );
+
+		panel.append( field( 'Hub', hubSelect ) );
+	}
+
+	if ( state.projects.length > 0 ) {
+		const projectSelect = element( 'select' );
+		const placeholder = element( 'option', { text: '— Select a project —' } );
+		placeholder.value = '';
+		projectSelect.append( placeholder );
+
+		for ( const project of state.projects ) {
+			const option = element( 'option', { text: project.name } );
+			option.value = project.id;
+			option.selected = state.context.projectId === project.id;
+			projectSelect.append( option );
+		}
+
+		projectSelect.addEventListener( 'change', () => {
+			state.context.projectId = projectSelect.value;
+		} );
+
+		panel.append( field( 'Project', projectSelect ) );
+	}
+
 	panel.append(
 		field(
 			'Hub ID',
@@ -137,6 +209,30 @@ function renderContent(): HTMLElement {
 			} )
 		)
 	);
+
+	if ( state.templates.length > 0 ) {
+		const templateSelect = element( 'select' );
+
+		for ( const template of state.templates ) {
+			const option = element( 'option', { text: template.label } );
+			option.value = template.id;
+			option.selected = state.template === template.id;
+			templateSelect.append( option );
+		}
+
+		templateSelect.addEventListener( 'change', () => {
+			state.template = templateSelect.value;
+			render();
+		} );
+
+		panel.append( field( 'Publishing template', templateSelect ) );
+
+		const chosen = state.templates.find( ( template ) => template.id === state.template );
+
+		if ( chosen ) {
+			panel.append( element( 'p', { className: 'muted', text: chosen.description } ) );
+		}
+	}
 
 	panel.append(
 		field(
@@ -499,7 +595,54 @@ function sourceDescriptor(): Record< string, unknown > {
 		projectId: state.context.projectId.trim(),
 		...( state.context.proposalId.trim() ? { proposalId: state.context.proposalId.trim() } : {} ),
 		includeFiles: state.includeFiles,
+		template: state.template,
 	};
+}
+
+async function loadHubs(): Promise< void > {
+	state.browsing = true;
+
+	await guard( async () => {
+		state.hubs = ( await client.hubs() ).hubs;
+
+		if ( state.hubs.length === 0 ) {
+			state.message = { kind: 'err', text: 'No Autodesk hubs are visible to the connected account.' };
+
+			return;
+		}
+
+		state.message = {
+			kind: 'ok',
+			text: `Loaded ${ state.hubs.length } hub${ state.hubs.length === 1 ? '' : 's' }.`,
+		};
+
+		// Pre-load projects when the current context already names a hub.
+		if ( state.context.hubId && state.hubs.some( ( hub ) => hub.id === state.context.hubId ) ) {
+			state.projects = ( await client.projects( state.context.hubId ) ).projects;
+		}
+	} );
+
+	state.browsing = false;
+	render();
+}
+
+async function loadProjects( hubId: string ): Promise< void > {
+	await guard( async () => {
+		state.projects = ( await client.projects( hubId ) ).projects;
+
+		if ( state.projects.length === 0 ) {
+			state.message = { kind: 'err', text: 'That hub contains no visible projects.' };
+		}
+	} );
+}
+
+async function loadTemplates(): Promise< void > {
+	try {
+		state.templates = ( await client.templates() ).templates;
+	} catch {
+		// Templates are a convenience; publishing still works with the default.
+		state.templates = [];
+	}
 }
 
 async function buildPreview(): Promise< void > {
@@ -513,6 +656,7 @@ async function buildPreview(): Promise< void > {
 				hubId: string;
 				projectId: string;
 				includeFiles: boolean;
+				template?: string;
 			}
 		);
 
@@ -528,10 +672,15 @@ async function publish( operation: 'publish' | 'update' | 'unpublish' ): Promise
 			? { ...state.preview, status: state.postStatus }
 			: undefined;
 
+		// The source descriptor is always sent, even alongside a pre-built
+		// project: the backend keeps it so a later scheduled sync refresh can
+		// rebuild this project without the extension being open.
 		const response = await client.publish( {
 			operation,
 			mode: state.mode,
-			...( project ? { project } : { source: sourceDescriptor() } ),
+			template: state.template,
+			source: sourceDescriptor(),
+			...( project ? { project } : {} ),
 		} );
 
 		const job = response.job;
@@ -563,6 +712,8 @@ async function boot(): Promise< void > {
 
 	if ( client.configured ) {
 		await checkConnection();
+		await loadTemplates();
+		render();
 	}
 }
 

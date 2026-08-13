@@ -97,6 +97,26 @@ Snapshot is the default. In sync mode the plugin retains the link and, on a Word
 
 The direction matters: WordPress never pulls from Autodesk. It only signals the backend, using the same HMAC scheme in reverse, so the shared secret remains the only credential either side needs.
 
+For that refresh to work unattended, the backend has to be able to rebuild a project without the extension being open. It therefore stores a **source descriptor** — hub, project, optional proposal, whether files were included, and the template used — alongside each published entry. On refresh it walks every sync-mode entry, rebuilds it from Autodesk, re-applies the original template and enqueues an update.
+
+Two consequences worth stating:
+
+- A project published from a hand-built payload with no descriptor **cannot** be refreshed. Those are counted and logged rather than silently skipped.
+- The refresh is queued asynchronously and returns `202` immediately, so a WordPress cron request never blocks on Autodesk.
+
+Because the queue hashes content before sending, a refresh over unchanged projects costs one Autodesk read each and no WordPress writes at all.
+
+## Publishing templates
+
+A template is a pre-mapped view of a project, chosen in the extension. It decides which parts of the canonical payload reach WordPress: description, metrics, assets, thumbnail, and optionally a restriction to specific metric categories.
+
+Templates are applied in two places on purpose:
+
+1. In `/api/preview`, so the editor sees exactly what will be published.
+2. In `/api/publish`, so a caller posting a hand-built project cannot bypass the constraint the template expresses.
+
+They only remove or constrain content, never add it, which keeps them safe to re-apply. That matters for sync mode: the template is stored with the project and re-applied on every refresh, so a project published under `sustainability` cannot start exposing area metrics months later because upstream data changed.
+
 ## Extension points
 
 | Hook | Type | Purpose |

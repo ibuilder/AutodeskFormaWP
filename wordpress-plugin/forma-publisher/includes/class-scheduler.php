@@ -95,19 +95,30 @@ class Scheduler {
 		}
 
 		$interval = (string) $this->settings->get( 'sync_interval', 'none' );
-		$existing = wp_next_scheduled( self::SYNC_HOOK );
+		$existing = wp_get_scheduled_event( self::SYNC_HOOK );
 
 		if ( 'none' === $interval ) {
 			if ( $existing ) {
-				wp_unschedule_event( $existing, self::SYNC_HOOK );
+				wp_clear_scheduled_hook( self::SYNC_HOOK );
 			}
 
 			return;
 		}
 
-		if ( ! $existing ) {
-			wp_schedule_event( time() + MINUTE_IN_SECONDS, $interval, self::SYNC_HOOK );
+		if ( $existing ) {
+			/*
+			 * An event already exists. Leave it alone only while its recurrence
+			 * still matches the setting; otherwise changing the interval in the
+			 * admin would save the option but never affect the schedule.
+			 */
+			if ( isset( $existing->schedule ) && $interval === $existing->schedule ) {
+				return;
+			}
+
+			wp_clear_scheduled_hook( self::SYNC_HOOK );
 		}
+
+		wp_schedule_event( time() + MINUTE_IN_SECONDS, $interval, self::SYNC_HOOK );
 	}
 
 	/**

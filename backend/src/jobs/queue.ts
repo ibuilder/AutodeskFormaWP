@@ -25,12 +25,34 @@ export interface PublishJob {
 	result?: Record<string, unknown>;
 }
 
+/** Where a published project came from, so a sync refresh can rebuild it. */
+export interface SourceDescriptor {
+	hubId: string;
+	projectId: string;
+	proposalId?: string;
+	includeFiles?: boolean;
+	overrides?: Record<string, unknown>;
+	/** Publishing template applied when this project was first published. */
+	template?: string;
+}
+
+export interface PublishedEntry {
+	sourceId: string;
+	postId?: number;
+	permalink?: string;
+	payloadHash: string;
+	syncedAt: string;
+	mode: string;
+	/**
+	 * Retained for sync mode so a scheduled refresh can rebuild the project
+	 * from Autodesk without the extension being open.
+	 */
+	source?: SourceDescriptor;
+}
+
 interface JobFile {
 	jobs: PublishJob[];
-	published: Record<
-		string,
-		{ sourceId: string; postId?: number; permalink?: string; payloadHash: string; syncedAt: string; mode: string }
-	>;
+	published: Record<string, PublishedEntry>;
 }
 
 const MAX_HISTORY = 500;
@@ -61,6 +83,7 @@ export class PublishQueue {
 		project: CanonicalProject;
 		mode?: 'snapshot' | 'sync';
 		force?: boolean;
+		source?: SourceDescriptor;
 	} ): Promise<PublishJob> {
 		const config = getConfig();
 		const hash = projectHash( options.project );
@@ -110,6 +133,10 @@ export class PublishQueue {
 			project: options.project,
 		} );
 
+		if ( options.source ) {
+			this.sources.set( job.id, options.source );
+		}
+
 		this.waiting.push( job.id );
 		void this.drain();
 
@@ -145,6 +172,7 @@ export class PublishQueue {
 	}
 
 	private readonly payloads = new Map<string, CanonicalPayload>();
+	private readonly sources = new Map<string, SourceDescriptor>();
 
 	private async drain(): Promise<void> {
 		if ( this.running ) {
@@ -198,6 +226,11 @@ export class PublishQueue {
 					const isWrite = payload.operation === 'publish' || payload.operation === 'update';
 
 					if ( isWrite ) {
+						const previous = state.published[ payload.project.source_id ];
+						// Keep a previously recorded descriptor when this publish
+						// came from a pre-built payload with no source attached.
+						const source = this.sources.get( jobId ) ?? previous?.source;
+
 						state.published[ payload.project.source_id ] = {
 							sourceId: payload.project.source_id,
 							...( response.result?.post_id ? { postId: response.result.post_id } : {} ),
@@ -205,6 +238,7 @@ export class PublishQueue {
 							payloadHash: projectHash( payload.project ),
 							syncedAt: new Date().toISOString(),
 							mode: payload.mode,
+							...( source ? { source } : {} ),
 						};
 					} else {
 						delete state.published[ payload.project.source_id ];
@@ -212,6 +246,7 @@ export class PublishQueue {
 				} );
 
 				this.payloads.delete( jobId );
+				this.sources.delete( jobId );
 				logger.info( 'Publish job succeeded', { jobId, sourceId: payload.project.source_id } );
 
 				return;
@@ -229,6 +264,7 @@ export class PublishQueue {
 					} );
 
 					this.payloads.delete( jobId );
+					this.sources.delete( jobId );
 
 					return;
 				}
