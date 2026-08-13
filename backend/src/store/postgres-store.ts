@@ -55,19 +55,59 @@ export class PostgresStore<T extends object> implements DocumentStore<T> {
 			return;
 		}
 
-		const ready: Promise<void> = this.pool
-			.query(
+		const ready = this.createSchema();
+
+		PostgresStore.schemaReady.set( this.pool, ready );
+
+		try {
+			await ready;
+		} catch ( error ) {
+			// Allow a later call to retry rather than caching the failure.
+			PostgresStore.schemaReady.delete( this.pool );
+
+			throw error;
+		}
+	}
+
+	/**
+	 * Creates the table, tolerating a concurrent creation by another instance.
+	 *
+	 * `CREATE TABLE IF NOT EXISTS` is not safe to run concurrently: two
+	 * connections racing to create the same table can still collide, raising a
+	 * unique violation on the system catalogue rather than quietly doing
+	 * nothing. Two service instances starting at the same moment against a fresh
+	 * database is exactly that race, so an advisory lock serializes the DDL and
+	 * the duplicate-object codes are treated as success.
+	 */
+	private async createSchema(): Promise<void> {
+		// Arbitrary constant, shared by every instance of this application.
+		const lockId = 8_675_309;
+		const client = await this.pool.connect();
+
+		try {
+			await client.query( 'SELECT pg_advisory_lock($1)', [ lockId ] );
+
+			try {
+				await client.query(
 					`CREATE TABLE IF NOT EXISTS forma_documents (
 						name       TEXT PRIMARY KEY,
 						data       JSONB NOT NULL,
 						updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 					)`
-			)
-			.then( () => undefined );
+				);
+			} finally {
+				await client.query( 'SELECT pg_advisory_unlock($1)', [ lockId ] ).catch( () => undefined );
+			}
+		} catch ( error ) {
+			const code = ( error as { code?: string } ).code;
 
-		PostgresStore.schemaReady.set( this.pool, ready );
-
-		await ready;
+			// 23505 unique_violation on pg_type, 42P07 duplicate_table.
+			if ( code !== '23505' && code !== '42P07' ) {
+				throw error;
+			}
+		} finally {
+			client.release();
+		}
 	}
 
 	async read(): Promise<T> {
