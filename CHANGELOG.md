@@ -4,7 +4,10 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.0]
+
+First release. Everything below shipped together; the fixes were found during
+pre-release hardening rather than in an earlier public version.
 
 ### Security
 
@@ -96,11 +99,9 @@ All notable changes to this project are documented here. The format follows
   `forma_publisher_rate_limit` (default 60 verified requests per connection per
   minute).
 
-## [1.0.0]
+### Initial implementation
 
-Initial release of all three components.
-
-### WordPress plugin
+#### WordPress plugin
 
 - Signed ingest endpoint at `/wp-json/forma-publisher/v1/ingest` with HMAC-SHA256
   verification, timestamp tolerance, nonce replay protection and per connection
@@ -119,7 +120,7 @@ Initial release of all three components.
 - Publish audit log with configurable retention and daily purge.
 - Optional scheduled refresh requests to the backend for sync mode content.
 
-### Backend service
+#### Backend service
 
 - Autodesk Platform Services OAuth: authorization code with PKCE for user
   context, client credentials for service reads, automatic refresh.
@@ -133,7 +134,7 @@ Initial release of all three components.
   the same source so they cannot drift apart.
 - Structured JSON logging with automatic redaction of secrets and tokens.
 
-### Forma extension
+#### Forma extension
 
 - Embedded view with Content, Preview, Connection and History tabs.
 - Canonical payload preview before anything is sent to WordPress.
