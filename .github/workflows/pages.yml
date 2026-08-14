@@ -1,0 +1,80 @@
+name: Pages
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'site/**'
+      - 'docs/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Publish the documentation site
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install
+        working-directory: site
+        run: npm ci
+
+      - name: Build the site from the markdown in docs/
+        working-directory: site
+        run: npm run build
+
+      - name: Check the output is self contained
+        run: |
+          # A documentation site that depends on a third party host at render
+          # time can break without anything in this repository changing.
+          if grep -rEq 'src="https?://|<link[^>]+href="https?://' site/_site; then
+            echo "The built site loads a remote asset. Keep it self contained." >&2
+            grep -rEn 'src="https?://|<link[^>]+href="https?://' site/_site || true
+            exit 1
+          fi
+
+          # Every navigation target must have been produced by the build.
+          missing=0
+          for page in overview installation configuration architecture \
+                      canonical-schema editorial-review security rest-api \
+                      rendering hooks index; do
+            if [ ! -f "site/_site/docs/${page}.html" ]; then
+              echo "Missing page: ${page}.html" >&2
+              missing=1
+            fi
+          done
+          [ "${missing}" -eq 0 ] || exit 1
+
+          echo "Self contained, and every documented page was built."
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/_site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

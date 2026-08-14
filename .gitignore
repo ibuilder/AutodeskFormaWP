@@ -5,6 +5,7 @@ vendor/
 # Build output
 dist/
 build/
+site/_site/
 
 # Runtime data and secrets
 .env

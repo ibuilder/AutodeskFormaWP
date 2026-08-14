@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Forma Publisher — Autodesk Forma to WordPress</title>
+<meta name="description" content="A source-driven publishing workflow that takes content from Autodesk Forma and publishes it into WordPress as curated, snapshot-friendly project pages." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏗️</text></svg>" />
+<style>
+:root {
+	--bg: #ffffff;
+	--bg-alt: #f6f7f9;
+	--fg: #16191d;
+	--muted: #5a6472;
+	--border: #e2e5ea;
+	--accent: #0b74c4;
+	--accent-fg: #ffffff;
+	--ok: #12692c;
+	--code-bg: #f2f4f7;
+	--shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 4px 12px rgba(16, 24, 40, .04);
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #0f1216;
+		--bg-alt: #161a20;
+		--fg: #e8eaed;
+		--muted: #9aa4b2;
+		--border: #262c35;
+		--accent: #4aa8e8;
+		--accent-fg: #07131d;
+		--ok: #6fd18c;
+		--code-bg: #171c23;
+		--shadow: none;
+	}
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+	background: var(--bg);
+	color: var(--fg);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	line-height: 1.65;
+	margin: 0;
+	-webkit-font-smoothing: antialiased;
+}
+.wrap { margin: 0 auto; max-width: 980px; padding: 0 24px; }
+a { color: var(--accent); }
+code, pre {
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+	font-size: .9em;
+}
+code { background: var(--code-bg); border-radius: 4px; padding: .15em .4em; }
+pre {
+	background: var(--code-bg);
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	overflow-x: auto;
+	padding: 14px 16px;
+}
+pre code { background: none; padding: 0; }
+
+header.hero { border-bottom: 1px solid var(--border); padding: 72px 0 56px; text-align: center; }
+.eyebrow {
+	color: var(--muted);
+	font-size: .8rem;
+	font-weight: 600;
+	letter-spacing: .09em;
+	text-transform: uppercase;
+}
+h1 { font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -.02em; line-height: 1.15; margin: 12px 0 16px; }
+.lede { color: var(--muted); font-size: clamp(1.02rem, 2.2vw, 1.18rem); margin: 0 auto; max-width: 660px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 32px; }
+.btn {
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	display: inline-block;
+	font-weight: 600;
+	padding: 11px 20px;
+	text-decoration: none;
+	transition: transform .12s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn--primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.btn--ghost { color: var(--fg); }
+
+section { border-bottom: 1px solid var(--border); padding: 56px 0; }
+section:last-of-type { border-bottom: 0; }
+h2 { font-size: 1.55rem; letter-spacing: -.01em; margin: 0 0 8px; }
+h3 { font-size: 1.02rem; margin: 0 0 6px; }
+.section-note { color: var(--muted); margin: 0 0 28px; max-width: 680px; }
+
+.grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.card {
+	background: var(--bg-alt);
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	box-shadow: var(--shadow);
+	padding: 20px;
+}
+.card p { color: var(--muted); margin: 0; font-size: .94rem; }
+
+figure.diagram { margin: 0 0 28px; }
+figure.diagram svg { height: auto; max-width: 100%; }
+figcaption { color: var(--muted); font-size: .86rem; margin-top: 10px; }
+
+table { border-collapse: collapse; font-size: .93rem; width: 100%; }
+th, td { border-bottom: 1px solid var(--border); padding: 9px 10px; text-align: left; vertical-align: top; }
+th { font-weight: 600; }
+.tick { color: var(--ok); font-weight: 600; }
+.table-scroll { overflow-x: auto; }
+
+ol.steps { counter-reset: step; list-style: none; margin: 0; padding: 0; }
+ol.steps > li { margin-bottom: 26px; padding-left: 44px; position: relative; }
+ol.steps > li::before {
+	background: var(--accent);
+	border-radius: 50%;
+	color: var(--accent-fg);
+	content: counter(step);
+	counter-increment: step;
+	display: grid;
+	font-size: .85rem;
+	font-weight: 700;
+	height: 28px;
+	left: 0;
+	place-items: center;
+	position: absolute;
+	top: 2px;
+	width: 28px;
+}
+ol.steps h3 { margin-bottom: 8px; }
+
+.callout {
+	background: var(--bg-alt);
+	border: 1px solid var(--border);
+	border-left: 3px solid var(--accent);
+	border-radius: 8px;
+	padding: 16px 18px;
+}
+.callout p { margin: 0; }
+.callout p + p { margin-top: 10px; }
+
+footer { color: var(--muted); font-size: .88rem; padding: 40px 0 56px; text-align: center; }
+footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+	<div class="wrap">
+		<p class="eyebrow">Autodesk Forma → WordPress</p>
+		<h1>Publish Forma projects to WordPress, safely.</h1>
+		<p class="lede">
+			A source-driven publishing workflow. Autodesk credentials stay in a backend you control,
+			WordPress receives signed snapshots, and your public site never depends on a third-party
+			API at request time.
+		</p>
+		<div class="cta">
+			<a class="btn btn--primary" href="https://github.com/ibuilder/AutodeskFormaWP/releases/latest">Download the plugin</a>
+			<a class="btn btn--ghost" href="https://github.com/ibuilder/AutodeskFormaWP">View on GitHub</a>
+			<a class="btn btn--ghost" href="#quick-start">Quick start</a>
+		</div>
+	</div>
+</header>
+
+<section id="why">
+	<div class="wrap">
+		<h2>Why not read Autodesk on every page load?</h2>
+		<p class="section-note">
+			The obvious design — a WordPress plugin that queries Autodesk when a visitor arrives — fails on
+			three counts. This project inverts the flow instead.
+		</p>
+		<div class="grid">
+			<div class="card">
+				<h3>Credentials</h3>
+				<p>OAuth access and refresh tokens in WordPress means tokens reachable by any compromised theme, plugin or admin session. Here they never leave the backend, encrypted at rest.</p>
+			</div>
+			<div class="card">
+				<h3>Availability</h3>
+				<p>A marketing site would inherit Autodesk's uptime and rate limits on every page view. Published pages render from local content, so an upstream outage changes nothing.</p>
+			</div>
+			<div class="card">
+				<h3>Coupling</h3>
+				<p>Rendering straight from upstream response shapes means a field rename becomes a broken public page. Everything is normalized into a versioned canonical schema first.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section id="architecture">
+	<div class="wrap">
+		<h2>How it fits together</h2>
+		<p class="section-note">Three components, one direction of travel. WordPress never calls Autodesk.</p>
+
+		<figure class="diagram">
+			<svg viewBox="0 0 900 250" role="img" aria-labelledby="diagram-title diagram-desc" xmlns="http://www.w3.org/2000/svg">
+				<title id="diagram-title">Architecture diagram</title>
+				<desc id="diagram-desc">The Forma embedded extension calls the backend service using an API key. The backend service reads Autodesk Platform Services and sends HMAC-signed payloads to the WordPress plugin, which renders public pages.</desc>
+				<style>
+					.bx { fill: var(--bg-alt); stroke: var(--border); }
+					.tl { fill: var(--fg); font: 600 14px -apple-system, "Segoe UI", Roboto, sans-serif; }
+					.sb { fill: var(--muted); font: 12px -apple-system, "Segoe UI", Roboto, sans-serif; }
+					.ln { fill: var(--muted); font: 11px -apple-system, "Segoe UI", Roboto, sans-serif; }
+					.ar { stroke: var(--accent); stroke-width: 2; fill: none; }
+				</style>
+				<defs>
+					<marker id="ah" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+						<path d="M0,0 L9,4.5 L0,9 z" fill="var(--accent)" />
+					</marker>
+				</defs>
+
+				<rect class="bx" x="8" y="60" width="230" height="120" rx="10" />
+				<text class="tl" x="28" y="92">Forma extension</text>
+				<text class="sb" x="28" y="116">Select content</text>
+				<text class="sb" x="28" y="136">Preview output</text>
+				<text class="sb" x="28" y="156">Publish and history</text>
+
+				<rect class="bx" x="335" y="60" width="230" height="120" rx="10" />
+				<text class="tl" x="355" y="92">Backend service</text>
+				<text class="sb" x="355" y="116">Autodesk OAuth + tokens</text>
+				<text class="sb" x="355" y="136">Canonical transform</text>
+				<text class="sb" x="355" y="156">Job queue and retries</text>
+
+				<rect class="bx" x="662" y="60" width="230" height="120" rx="10" />
+				<text class="tl" x="682" y="92">WordPress plugin</text>
+				<text class="sb" x="682" y="116">Verify signature</text>
+				<text class="sb" x="682" y="136">Upsert projects</text>
+				<text class="sb" x="682" y="156">Render blocks</text>
+
+				<line class="ar" x1="240" y1="120" x2="325" y2="120" marker-end="url(#ah)" />
+				<text class="ln" x="245" y="110">API key</text>
+
+				<line class="ar" x1="567" y1="120" x2="652" y2="120" marker-end="url(#ah)" />
+				<text class="ln" x="566" y="110">HMAC signed</text>
+
+				<text class="sb" x="355" y="205">↑ reads Autodesk Platform Services</text>
+				<text class="sb" x="662" y="205">→ public pages, no upstream calls</text>
+			</svg>
+			<figcaption>Autodesk tokens exist only in the middle box. The right-hand box holds no Autodesk credential of any kind.</figcaption>
+		</figure>
+	</div>
+</section>
+
+<section id="features">
+	<div class="wrap">
+		<h2>What you get</h2>
+		<div class="grid">
+			<div class="card">
+				<h3>Signed ingest</h3>
+				<p>HMAC-SHA256 over method, route, timestamp, nonce and a hash of the body. Stale requests, replays and floods are all rejected.</p>
+			</div>
+			<div class="card">
+				<h3>Idempotent publishing</h3>
+				<p>Projects match on their Autodesk source ID. Republishing identical content is recorded as skipped rather than rewriting the page.</p>
+			</div>
+			<div class="card">
+				<h3>Local edit protection</h3>
+				<p>If an editor improves a page, the next sync will not silently discard that work. Hold it for review, keep the local version, or overwrite.</p>
+			</div>
+			<div class="card">
+				<h3>Blocks and shortcodes</h3>
+				<p>Four server-rendered blocks and four matching shortcodes for project lists, single projects, metrics and assets — with theme template overrides.</p>
+			</div>
+			<div class="card">
+				<h3>Publishing templates</h3>
+				<p>Pre-mapped views decide what actually reaches WordPress. A sustainability page cannot start leaking area metrics because upstream data changed.</p>
+			</div>
+			<div class="card">
+				<h3>Audit trail</h3>
+				<p>Every publish, update, unpublish and archive is recorded with its result and connection. No IP addresses, no payload bodies, no secrets.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section id="quick-start">
+	<div class="wrap">
+		<h2>Quick start</h2>
+		<p class="section-note">Three pieces. The plugin is installable today; the backend needs an Autodesk Platform Services application.</p>
+
+		<ol class="steps">
+			<li>
+				<h3>Install the WordPress plugin</h3>
+				<p class="section-note">Upload the release archive on the Plugins screen, activate it, then open <strong>Forma → Connections</strong> and create a connection. The shared secret is shown once.</p>
+				<pre><code>define( 'FORMA_PUBLISHER_CONNECTIONS', array(
+	'fp_yourkeyid' =&gt; 'your-shared-secret',
+) );</code></pre>
+			</li>
+			<li>
+				<h3>Run the backend</h3>
+				<p class="section-note">It holds every Autodesk credential and does all the talking.</p>
+				<pre><code>cd backend
+cp .env.example .env
+npm install &amp;&amp; npm run build &amp;&amp; npm start</code></pre>
+			</li>
+			<li>
+				<h3>Check the whole pipeline</h3>
+				<p class="section-note">Exercises configuration, the Autodesk session, project access, payload assembly and a signed round trip to WordPress. Publishes nothing.</p>
+				<pre><code>npm run verify</code></pre>
+			</li>
+		</ol>
+	</div>
+</section>
+
+<section id="security">
+	<div class="wrap">
+		<h2>Security model</h2>
+		<div class="callout">
+			<p><strong>WordPress holds no Autodesk credential.</strong> Not by policy — by construction. The plugin has no Autodesk client, no token storage and no code path that reaches <code>developer.api.autodesk.com</code>.</p>
+			<p>Failed authentication is charged to the origin address and only verified requests count against a connection, so learning a key ID cannot be used to lock the real backend out. Remote media import is off by default and, when enabled, restricted to an explicit host allow list.</p>
+		</div>
+	</div>
+</section>
+
+<section id="status">
+	<div class="wrap">
+		<h2>Verification</h2>
+		<p class="section-note">
+			Every figure below comes from a run in CI, not from a claim. The plugin suite runs against a real
+			WordPress install rather than mocks, so REST dispatch, capabilities, cron and uninstall behave as
+			they do in production.
+		</p>
+		<div class="table-scroll">
+			<table>
+				<tbody>
+					<tr><th>WordPress Plugin Check — all categories, severity 1, experimental</th><td class="tick">No errors, no warnings</td></tr>
+					<tr><th>WordPress Coding Standards (WPCS 3)</th><td class="tick">Clean</td></tr>
+					<tr><th>PHP compatibility</th><td>7.4 – 8.4</td></tr>
+					<tr><th>Plugin suite, single site</th><td class="tick">337 assertions</td></tr>
+					<tr><th>Plugin suite, multisite network</th><td class="tick">360 assertions</td></tr>
+					<tr><th>Backend tests (70 with PostgreSQL)</th><td class="tick">62 passing</td></tr>
+					<tr><th>Node signer ↔ PHP verifier interop</th><td class="tick">Byte-identical</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</section>
+
+<section id="docs">
+	<div class="wrap">
+		<h2>Documentation</h2>
+		<div class="grid">
+			<div class="card">
+				<h3><a href="https://github.com/ibuilder/AutodeskFormaWP/blob/main/docs/architecture.md">Architecture</a></h3>
+				<p>Why source-driven, the publish sequence, idempotency, asset lifecycle and sync mode.</p>
+			</div>
+			<div class="card">
+				<h3><a href="https://github.com/ibuilder/AutodeskFormaWP/blob/main/docs/canonical-schema.md">Canonical schema</a></h3>
+				<p>The contract between the backend and WordPress, field by field, with versioning rules.</p>
+			</div>
+			<div class="card">
+				<h3><a href="https://github.com/ibuilder/AutodeskFormaWP/blob/main/docs/security.md">Security model</a></h3>
+				<p>Trust boundaries, request signing, replay resistance, SSRF guards and secret storage.</p>
+			</div>
+			<div class="card">
+				<h3><a href="https://github.com/ibuilder/AutodeskFormaWP/blob/main/docs/installation.md">Installation &amp; operations</a></h3>
+				<p>Setup, storage choices, publishing, scheduled refresh and a troubleshooting table.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<footer>
+	<div class="wrap">
+		<p>
+			<a href="https://github.com/ibuilder/AutodeskFormaWP">GitHub</a> ·
+			<a href="https://github.com/ibuilder/AutodeskFormaWP/releases/latest">Releases</a> ·
+			<a href="https://github.com/ibuilder/AutodeskFormaWP/blob/main/LICENSE">GPL-2.0-or-later</a>
+		</p>
+		<p>Not affiliated with or endorsed by Autodesk. Autodesk and Forma are trademarks of Autodesk, Inc.</p>
+	</div>
+</footer>
+
+</body>
+</html>

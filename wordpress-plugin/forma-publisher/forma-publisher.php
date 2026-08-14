@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Forma Publisher
- * Plugin URI:        https://github.com/ibuilder/forma-to-wordpress
+ * Plugin URI:        https://github.com/ibuilder/AutodeskFormaWP
  * Description:       Receives signed, normalized Autodesk Forma content from a trusted backend service and renders it as WordPress projects, metrics and assets.
  * Version:           1.1.0
  * Requires at least: 6.4

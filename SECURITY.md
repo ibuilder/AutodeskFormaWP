@@ -3,7 +3,7 @@
 ## Reporting a vulnerability
 
 Please report security issues privately through a
-[GitHub security advisory](https://github.com/ibuilder/forma-to-wordpress/security/advisories/new)
+[GitHub security advisory](https://github.com/ibuilder/AutodeskFormaWP/security/advisories/new)
 rather than a public issue.
 
 Include the affected component (WordPress plugin, backend service or Forma

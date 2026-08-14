@@ -141,4 +141,4 @@ pre-release hardening rather than in an earlier public version.
 - Publish, update and unpublish actions with job status feedback.
 - Graceful degradation to manual project entry when run outside Forma.
 
-[1.0.0]: https://github.com/ibuilder/forma-to-wordpress/releases/tag/v1.0.0
+[1.0.0]: https://github.com/ibuilder/AutodeskFormaWP/releases/tag/v1.0.0

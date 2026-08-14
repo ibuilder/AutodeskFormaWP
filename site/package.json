@@ -1,0 +1,18 @@
+{
+	"name": "forma-to-wordpress-site",
+	"version": "1.0.0",
+	"description": "Builds the project documentation site from the markdown in docs/.",
+	"license": "GPL-2.0-or-later",
+	"private": true,
+	"type": "module",
+	"engines": {
+		"node": ">=22.6"
+	},
+	"scripts": {
+		"build": "node build.mjs",
+		"serve": "node build.mjs && node serve.mjs"
+	},
+	"dependencies": {
+		"marked": "^15.0.6"
+	}
+}

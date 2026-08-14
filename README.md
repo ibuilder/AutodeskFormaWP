@@ -160,10 +160,20 @@ Both implementations satisfy the same contract test, including a concurrency cas
 
 ## Documentation
 
-- [Architecture](docs/architecture.md)
-- [Canonical schema](docs/canonical-schema.md)
-- [Security model](docs/security.md)
-- [Installation and operations](docs/installation.md)
+**📖 [ibuilder.github.io/AutodeskFormaWP](https://ibuilder.github.io/AutodeskFormaWP/)** — the full documentation site, generated from the markdown below so the two cannot drift apart.
+
+| | |
+|---|---|
+| [Overview](docs/overview.md) | What it is, what it deliberately will not do |
+| [Installation and operations](docs/installation.md) | Setup, storage, publishing, troubleshooting |
+| [Configuration reference](docs/configuration.md) | Every setting and environment variable |
+| [Architecture](docs/architecture.md) | Why source-driven, publish sequence, sync mode |
+| [Canonical schema](docs/canonical-schema.md) | The contract between backend and WordPress |
+| [Editorial review](docs/editorial-review.md) | Local edit protection and the review queue |
+| [Security model](docs/security.md) | Trust boundaries, signing, SSRF guards |
+| [WordPress REST API](docs/rest-api.md) | Endpoints, signing worked example, error codes |
+| [Blocks, shortcodes and templates](docs/rendering.md) | Rendering and theme overrides |
+| [Hooks and post meta](docs/hooks.md) | Extending the plugin |
 
 ## Development
 
