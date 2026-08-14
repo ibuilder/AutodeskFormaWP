@@ -47,6 +47,34 @@
 	margin: 1rem 0;
 }
 
+.forma-publisher-admin .forma-publisher-stats {
+	display: grid;
+	gap: 12px;
+	grid-template-columns: repeat( auto-fit, minmax( 150px, 1fr ) );
+	margin: 1rem 0 1.5rem;
+}
+
+.forma-publisher-admin .forma-publisher-stat {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	display: flex;
+	flex-direction: column;
+	padding: 0.9rem 1rem;
+}
+
+.forma-publisher-admin .forma-publisher-stat__value {
+	font-size: 1.8rem;
+	font-weight: 600;
+	line-height: 1.1;
+}
+
+.forma-publisher-admin .forma-publisher-stat__label {
+	color: #50575e;
+	font-size: 0.82rem;
+	margin-top: 0.2rem;
+}
+
 .forma-publisher-meta {
 	margin: 0;
 }

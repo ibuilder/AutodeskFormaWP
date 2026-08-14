@@ -153,9 +153,12 @@ class Ingest_Service {
 	 * @param array<string,mixed> $project       Canonical project data.
 	 * @param string              $connection_id Connection key id.
 	 * @param string              $mode          Publishing mode.
+	 * @param bool                $force         Skip the local edit check. Used when an
+	 *                                           operator has explicitly chosen to apply
+	 *                                           an update that was held for review.
 	 * @return array<string,mixed>|\WP_Error Result summary, or an error.
 	 */
-	private function upsert_project( array $project, $connection_id, $mode ) {
+	private function upsert_project( array $project, $connection_id, $mode, $force = false ) {
 		$source_id = sanitize_text_field( $project['source_id'] );
 		$hash      = hash( 'sha256', wp_json_encode( $project ) );
 		$existing  = $this->repository->find_by_source_id( Post_Types::PROJECT, $source_id );
@@ -170,10 +173,46 @@ class Ingest_Service {
 			);
 		}
 
+		/*
+		 * Protect editorial work. If the post changed since the plugin last
+		 * wrote to it, an incoming update would silently discard those edits.
+		 */
+		if ( ! $force && $existing && Review::has_local_edits( $existing ) ) {
+			$policy = (string) $this->settings->get( 'conflict_policy', 'hold' );
+
+			if ( 'skip' === $policy ) {
+				return array(
+					'status'       => 'skipped_local_edit',
+					'post_id'      => $existing,
+					'source_id'    => $source_id,
+					'payload_hash' => $hash,
+					'message'      => __( 'The project was edited in WordPress, so the update was discarded.', 'forma-publisher' ),
+				);
+			}
+
+			if ( 'hold' === $policy ) {
+				Review::hold( $existing, $project, $connection_id, $mode, $hash );
+				Review::flush_attention_count();
+
+				return array(
+					'status'       => 'held_for_review',
+					'post_id'      => $existing,
+					'source_id'    => $source_id,
+					'payload_hash' => $hash,
+					'message'      => __( 'The project was edited in WordPress, so the update is waiting for review.', 'forma-publisher' ),
+				);
+			}
+		}
+
 		$status = isset( $project['status'] ) ? sanitize_key( $project['status'] ) : '';
 
 		if ( ! in_array( $status, array( 'publish', 'draft', 'pending', 'private' ), true ) ) {
 			$status = (string) $this->settings->get( 'default_post_status', 'draft' );
+		}
+
+		// A new project can be required to pass through editorial review first.
+		if ( ! $existing && $this->settings->get( 'require_approval', false ) && 'publish' === $status ) {
+			$status = 'pending';
 		}
 
 		$postarr = array(
@@ -218,6 +257,14 @@ class Ingest_Service {
 			}
 		}
 
+		/*
+		 * Recorded last, after every write, so the stored modification time
+		 * reflects the state the plugin produced. Anything later is a human.
+		 */
+		Review::record_sync( $post_id );
+		Review::clear( $post_id );
+		Review::flush_attention_count();
+
 		return array(
 			'status'       => $existing ? 'updated' : 'created',
 			'post_id'      => $post_id,
@@ -227,6 +274,56 @@ class Ingest_Service {
 			'payload_hash' => $hash,
 			'message'      => $media_note,
 		);
+	}
+
+	/**
+	 * Applies an update that was parked for editorial review.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param int $post_id Project post id.
+	 * @return array<string,mixed>|\WP_Error Result summary, or an error.
+	 */
+	public function apply_held_update( $post_id ) {
+		$held = Review::held( $post_id );
+
+		if ( null === $held ) {
+			return new \WP_Error(
+				'forma_publisher_no_held_update',
+				__( 'There is no update waiting for review on that project.', 'forma-publisher' ),
+				array( 'status' => 404 )
+			);
+		}
+
+		Review::clear( $post_id );
+
+		/*
+		 * The conflict is derived from the post's modification time, which is
+		 * still divergent, so the check has to be skipped explicitly. Clearing
+		 * the hold alone would let the update be parked again immediately.
+		 */
+		$result = $this->upsert_project(
+			$held['project'],
+			isset( $held['connection'] ) ? (string) $held['connection'] : '',
+			isset( $held['mode'] ) ? (string) $held['mode'] : 'snapshot',
+			true
+		);
+
+		if ( ! is_wp_error( $result ) ) {
+			$this->audit_log->log(
+				array(
+					'operation'  => 'review_applied',
+					'result'     => 'success',
+					'connection' => isset( $held['connection'] ) ? (string) $held['connection'] : '',
+					'source_id'  => isset( $held['project']['source_id'] ) ? (string) $held['project']['source_id'] : '',
+					'post_id'    => $post_id,
+				)
+			);
+		}
+
+		Review::flush_attention_count();
+
+		return $result;
 	}
 
 	/**

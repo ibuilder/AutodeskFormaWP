@@ -122,6 +122,23 @@ class Settings {
 			'backend_url'         => '',
 			'sync_interval'       => 'none',
 			'sync_connection'     => '',
+			'require_approval'    => false,
+			'conflict_policy'     => 'hold',
+		);
+	}
+
+	/**
+	 * Returns the selectable policies for handling locally edited content.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return array<string,string> Policy slug to label map.
+	 */
+	public static function conflict_policies() {
+		return array(
+			'hold'      => __( 'Hold the update for review', 'forma-publisher' ),
+			'skip'      => __( 'Keep the local edits and discard the update', 'forma-publisher' ),
+			'overwrite' => __( 'Overwrite the local edits', 'forma-publisher' ),
 		);
 	}
 
@@ -244,6 +261,16 @@ class Settings {
 			$key_id = sanitize_key( $input['sync_connection'] );
 
 			$output['sync_connection'] = array_key_exists( $key_id, $this->connections() ) ? $key_id : '';
+		}
+
+		$output['require_approval'] = ! empty( $input['require_approval'] );
+
+		if ( isset( $input['conflict_policy'] ) ) {
+			$policy = sanitize_key( $input['conflict_policy'] );
+
+			if ( array_key_exists( $policy, self::conflict_policies() ) ) {
+				$output['conflict_policy'] = $policy;
+			}
 		}
 
 		return $output;

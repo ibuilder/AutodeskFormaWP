@@ -59,7 +59,8 @@ class Plugin {
 		$this->services['scheduler']  = new Scheduler( $this->services['settings'], $this->services['audit_log'] );
 
 		if ( is_admin() ) {
-			$this->services['admin'] = new Admin\Admin( $this->services['settings'], $this->services['audit_log'] );
+			$this->services['admin']     = new Admin\Admin( $this->services['settings'], $this->services['audit_log'] );
+			$this->services['dashboard'] = new Admin\Dashboard( $this->services['settings'], $this->services['audit_log'] );
 		}
 
 		foreach ( $this->services as $service ) {

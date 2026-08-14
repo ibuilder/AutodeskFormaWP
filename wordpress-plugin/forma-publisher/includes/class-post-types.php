@@ -189,6 +189,8 @@ class Post_Types {
 			'_forma_last_synced'       => 'string',
 			'_forma_source_updated_at' => 'string',
 			'_forma_publish_state'     => 'string',
+			'_forma_synced_modified'   => 'string',
+			'_forma_held_at'           => 'string',
 		);
 	}
 
@@ -245,7 +247,7 @@ class Post_Types {
 			)
 		);
 
-		foreach ( array( '_forma_metrics', '_forma_location' ) as $key ) {
+		foreach ( array( '_forma_metrics', '_forma_location', '_forma_held_payload' ) as $key ) {
 			register_post_meta(
 				self::PROJECT,
 				$key,

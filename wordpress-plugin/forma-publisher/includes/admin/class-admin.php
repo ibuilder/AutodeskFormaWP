@@ -157,6 +157,30 @@ class Admin {
 				<table class="form-table" role="presentation">
 					<tbody>
 						<tr>
+							<th scope="row"><?php esc_html_e( 'Editorial approval', 'forma-publisher' ); ?></th>
+							<td>
+								<label>
+									<input type="checkbox" name="<?php echo esc_attr( Settings::OPTION ); ?>[require_approval]" value="1" <?php checked( ! empty( $settings['require_approval'] ) ); ?> />
+									<?php esc_html_e( 'Hold newly published projects for review instead of publishing them immediately', 'forma-publisher' ); ?>
+								</label>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label for="forma-conflict-policy"><?php esc_html_e( 'When a project was edited here', 'forma-publisher' ); ?></label>
+							</th>
+							<td>
+								<select id="forma-conflict-policy" name="<?php echo esc_attr( Settings::OPTION ); ?>[conflict_policy]">
+									<?php foreach ( Settings::conflict_policies() as $value => $label ) : ?>
+										<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $settings['conflict_policy'], $value ); ?>>
+											<?php echo esc_html( $label ); ?>
+										</option>
+									<?php endforeach; ?>
+								</select>
+								<p class="description"><?php esc_html_e( 'Applies when a project changed in WordPress after the last synchronization, so an incoming update would discard that work.', 'forma-publisher' ); ?></p>
+							</td>
+						</tr>
+						<tr>
 							<th scope="row">
 								<label for="forma-default-status"><?php esc_html_e( 'Default post status', 'forma-publisher' ); ?></label>
 							</th>

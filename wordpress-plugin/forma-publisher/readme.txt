@@ -4,7 +4,7 @@ Tags: autodesk, forma, publishing, projects, architecture
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,12 @@ Yes. Each site keeps its own settings, connections and content, and the uninstal
 
 == Changelog ==
 
+= 1.1.0 =
+* Local edit protection. If a project is edited in WordPress after it was published, an incoming update no longer silently overwrites that work. Choose to hold it for review, keep the local edits, or overwrite.
+* Editorial review screen listing held updates and projects awaiting approval, with a count badge in the menu.
+* Optional approval step so newly published projects arrive as pending review rather than going live immediately.
+* Operator overview screen showing connection status, scheduled refresh, recent failures and recent activity.
+
 = 1.0.0 =
 * Initial release.
 * Signed ingest endpoint with HMAC-SHA256 verification, replay protection and per connection rate limiting.
@@ -89,6 +95,9 @@ Yes. Each site keeps its own settings, connections and content, and the uninstal
 * Optional scheduled refresh requests to the backend service.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Adds protection for locally edited projects, an editorial review queue and an operator overview screen. Existing projects are treated as unedited until their next synchronization, so upgrading does not hold everything for review.
 
 = 1.0.0 =
 Initial release.

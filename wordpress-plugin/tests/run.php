@@ -50,6 +50,7 @@ $forma_publisher_suites = array(
 	'test-ingest.php',
 	'test-rendering.php',
 	'test-media.php',
+	'test-review.php',
 	'test-lifecycle.php',
 );
 
