@@ -4,6 +4,52 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0]
+
+### Added
+
+- **Local edit protection.** Snapshot publishing has an inherent conflict: an
+  editor improves a project page, and the next synchronization silently
+  discards that work. The plugin now records the post's modification time at
+  each sync, so a later divergence is recognised as a human edit. Three
+  policies: hold the update for review (default), keep the local edits, or
+  overwrite. Projects with no recorded time predate the feature and are treated
+  as clean, so upgrading does not park every project at once.
+- **Editorial review screen** listing updates held because the project was
+  edited in WordPress, with apply and keep-local actions, alongside projects
+  awaiting approval. A count badge appears in the menu when anything needs
+  attention. Discarding an update records the local version as the agreed
+  state, so the next update is not immediately held again for the same reason.
+- **Optional approval step** so newly published projects arrive as pending
+  review rather than going live immediately. Applies to new projects only;
+  updates follow the conflict policy instead.
+- **Operator overview screen** answering whether the pipeline is working:
+  connection status, ingest endpoint, last accepted publish, scheduled refresh
+  and next run, WP-Cron mode, the active local edit policy, counts and recent
+  activity.
+- **`GET /metrics`** on the backend, exposing Prometheus text for jobs by
+  status, queue depth, published and sync-tracked counts, and seconds since the
+  last success and failure. Requires the extension API key.
+- **`GET /ready`**, a readiness probe that checks storage and the Autodesk
+  session and returns 503 when the service cannot publish. `/health` remains a
+  liveness probe that never fails on a dependency.
+- **Deployment artifacts**: a multi-stage Dockerfile running as an
+  unprivileged user with tini as PID 1, a Compose file including PostgreSQL,
+  and a deployment guide covering reverse proxies, systemd hardening, Autodesk
+  application setup, monitoring, upgrade order and backups.
+- **A documentation site** at https://ibuilder.github.io/AutodeskFormaWP/,
+  generated from the markdown in `docs/` so the published site cannot drift
+  from the repository. Adds reference documentation for the REST API,
+  configuration, rendering, hooks and editorial review.
+- **A Forma extension manifest** ready to register as an embedded view.
+
+### Fixed
+
+- Applying a held update re-parked it immediately. The conflict is derived from
+  the post modification time, which is still divergent at that moment, so
+  clearing the hold alone was not enough; the check is now skipped explicitly
+  for that one write.
+
 ## [1.0.0]
 
 First release. Everything below shipped together; the fixes were found during

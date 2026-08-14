@@ -39,8 +39,8 @@ Three properties fall out of this split:
 | WordPress Plugin Check (all categories, severity 1, experimental) | No errors, no warnings |
 | WordPress Coding Standards (WPCS 3, `WordPress` ruleset) | Clean |
 | PHP compatibility | 7.4 – 8.4 |
-| Plugin integration suite (single site) | 303 assertions passing |
-| Plugin integration suite (multisite network) | 326 assertions passing |
+| Plugin integration suite (single site) | 337 assertions passing |
+| Plugin integration suite (multisite network) | 360 assertions passing |
 | Backend tests | 62 passing |
 | Storage contract (JSON file store and PostgreSQL) | Both pass the same contract |
 | Cross-language signature interop (Node signer ↔ PHP verifier) | Byte-identical |
