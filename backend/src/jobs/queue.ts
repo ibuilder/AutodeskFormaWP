@@ -165,6 +165,58 @@ export class PublishQueue {
 		return state.published;
 	}
 
+	/** Aggregates job history for the metrics endpoint. */
+	async stats(): Promise<{
+		byStatus: Record<JobStatus, number>;
+		total: number;
+		queueDepth: number;
+		published: number;
+		syncTracked: number;
+		lastSuccessAt: number;
+		lastFailureAt: number;
+	}> {
+		const state = await this.store.read();
+
+		const byStatus: Record<JobStatus, number> = {
+			queued: 0,
+			running: 0,
+			succeeded: 0,
+			failed: 0,
+			skipped: 0,
+		};
+
+		let lastSuccessAt = 0;
+		let lastFailureAt = 0;
+
+		for ( const job of state.jobs ) {
+			byStatus[ job.status ] = ( byStatus[ job.status ] ?? 0 ) + 1;
+
+			const stamp = Date.parse( job.updatedAt );
+
+			if ( Number.isNaN( stamp ) ) {
+				continue;
+			}
+
+			if ( job.status === 'succeeded' ) {
+				lastSuccessAt = Math.max( lastSuccessAt, stamp );
+			} else if ( job.status === 'failed' ) {
+				lastFailureAt = Math.max( lastFailureAt, stamp );
+			}
+		}
+
+		const entries = Object.values( state.published );
+
+		return {
+			byStatus,
+			total: state.jobs.length,
+			queueDepth: this.waiting.length + ( this.running ? 1 : 0 ),
+			published: entries.length,
+			syncTracked: entries.filter( ( entry ) => entry.mode === 'sync' ).length,
+			lastSuccessAt,
+			lastFailureAt,
+		};
+	}
+
 	/** Waits until the queue is idle. Used by tests and the refresh endpoint. */
 	async settle(): Promise<void> {
 		while ( this.running || this.waiting.length > 0 ) {

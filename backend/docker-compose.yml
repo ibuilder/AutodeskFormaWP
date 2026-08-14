@@ -1,0 +1,36 @@
+# Runs the backend with PostgreSQL, which is what a deployment of more than one
+# instance needs. Copy .env.example to .env first; DATABASE_URL is set here and
+# overrides whatever the file says.
+services:
+  backend:
+    build: .
+    restart: unless-stopped
+    ports:
+      - '${PORT:-3000}:3000'
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: '3000'
+      DATABASE_URL: postgres://forma:${POSTGRES_PASSWORD:-forma}@postgres:5432/forma
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: forma
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-forma}
+      POSTGRES_DB: forma
+    volumes:
+      - forma-db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U forma -d forma' ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  forma-db:

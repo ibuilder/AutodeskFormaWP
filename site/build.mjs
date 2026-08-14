@@ -24,6 +24,7 @@ const NAV = [
 		items: [
 			{ file: 'overview.md', label: 'Overview' },
 			{ file: 'installation.md', label: 'Installation & operations' },
+			{ file: 'deployment.md', label: 'Deployment' },
 			{ file: 'configuration.md', label: 'Configuration reference' },
 		],
 	},

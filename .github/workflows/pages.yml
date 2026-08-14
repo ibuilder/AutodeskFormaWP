@@ -55,7 +55,7 @@ jobs:
 
           # Every navigation target must have been produced by the build.
           missing=0
-          for page in overview installation configuration architecture \
+          for page in overview installation deployment configuration architecture \
                       canonical-schema editorial-review security rest-api \
                       rendering hooks index; do
             if [ ! -f "site/_site/docs/${page}.html" ]; then

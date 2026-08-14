@@ -1,0 +1,27 @@
+{
+	"$schema": "https://app.autodeskforma.com/extensions/schema.json",
+	"id": "forma-to-wordpress-publisher",
+	"name": "Publish to WordPress",
+	"description": "Select Forma project content, preview the exact payload, and publish it to WordPress through a backend service that holds every Autodesk credential.",
+	"version": "1.0.0",
+	"author": "iBuilder",
+	"license": "GPL-2.0-or-later",
+	"homepage": "https://ibuilder.github.io/AutodeskFormaWP/",
+	"scopes": [
+		"data:read"
+	],
+	"extensions": [
+		{
+			"id": "forma-to-wordpress-publisher.panel",
+			"type": "embeddedView",
+			"title": "Publish to WordPress",
+			"description": "Publish the current project to WordPress.",
+			"url": "https://your-host.example.com/forma-extension/index.html",
+			"placement": "rightPanel",
+			"size": {
+				"width": 420,
+				"height": 720
+			}
+		}
+	]
+}

@@ -8,6 +8,7 @@ import { refreshSyncProjects } from './jobs/refresh.js';
 import { logger } from './logger.js';
 import { apiRoutes } from './routes/api.js';
 import { authRoutes } from './routes/auth.js';
+import { renderMetrics } from './routes/metrics.js';
 import { verifyInbound } from './security/hmac.js';
 
 interface RawBodyRequest extends Request {
@@ -64,8 +65,43 @@ export function createServer(): express.Express {
 		next();
 	} );
 
+	/** Liveness. Answers only "is the process up?" so it never fails on a dependency. */
 	app.get( '/health', ( _req, res ) => {
 		res.json( { status: 'ok', schemaVersion: '1.0', uptime: Math.floor( process.uptime() ) } );
+	} );
+
+	/**
+	 * Readiness. Checks the dependencies that must work for a publish to
+	 * succeed, and returns 503 when one does not, so an orchestrator can hold
+	 * traffic back rather than routing to an instance that cannot publish.
+	 */
+	app.get( '/ready', async ( _req, res ) => {
+		const checks: Record<string, { ok: boolean; detail?: string }> = {};
+
+		try {
+			await queue.published();
+			checks.storage = { ok: true };
+		} catch ( error ) {
+			checks.storage = { ok: false, detail: error instanceof Error ? error.message : String( error ) };
+		}
+
+		try {
+			checks.autodeskSession = { ok: await oauth.hasUserSession() };
+
+			if ( ! checks.autodeskSession.ok ) {
+				checks.autodeskSession.detail = 'No Autodesk session; complete the flow at /auth/login.';
+			}
+		} catch ( error ) {
+			checks.autodeskSession = { ok: false, detail: error instanceof Error ? error.message : String( error ) };
+		}
+
+		const ready = Object.values( checks ).every( ( check ) => check.ok );
+
+		res.status( ready ? 200 : 503 ).json( { ready, checks } );
+	} );
+
+	app.get( '/metrics', requireExtensionKey, async ( _req, res ) => {
+		res.type( 'text/plain; version=0.0.4' ).send( await renderMetrics( queue ) );
 	} );
 
 	app.use( '/auth', authRoutes( oauth ) );
