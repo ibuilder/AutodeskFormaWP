@@ -4,7 +4,7 @@ Tags: autodesk, forma, publishing, projects, architecture
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Receives signed Autodesk Forma content from a trusted backend and publishes it a
 
 == Description ==
 
-Forma Publisher is the WordPress half of a source driven publishing workflow for Autodesk Forma. A trusted backend service owns the Autodesk Platform Services credentials, normalizes project data into a stable canonical schema, and pushes signed snapshots to this plugin. WordPress stores and renders that content; it never talks to Autodesk directly and never holds an Autodesk token.
+Publisher for Autodesk Forma is the WordPress half of a source driven publishing workflow for Autodesk Forma. A trusted backend service owns the Autodesk Platform Services credentials, normalizes project data into a stable canonical schema, and pushes signed snapshots to this plugin. WordPress stores and renders that content; it never talks to Autodesk directly and never holds an Autodesk token.
 
 This split keeps the public website fast and independent: pages render from local content instead of live third party API calls, and an outage or credential change upstream cannot break the front end.
 
@@ -117,6 +117,11 @@ No. This is an independent, community developed plugin. It is not affiliated wit
 
 == Changelog ==
 
+= 1.2.1 =
+* The Plugin URI now points at the plugin's documentation page rather than a bare repository root.
+* The licence is declared identically in the plugin header and the readme.
+* Corrected the plugin name in the description.
+
 = 1.2.0 =
 * Renamed the plugin to Publisher for Autodesk Forma, with the slug `publisher-for-autodesk-forma`, so that it does not begin with a trademarked term.
 * The text domain changed with the slug. Translations against the old domain need regenerating.
@@ -138,6 +143,9 @@ No. This is an independent, community developed plugin. It is not affiliated wit
 * Optional scheduled refresh requests to the backend service.
 
 == Upgrade Notice ==
+
+= 1.2.1 =
+Metadata corrections only. No functional change.
 
 = 1.2.0 =
 The plugin folder is now `publisher-for-autodesk-forma`. If you installed an earlier build manually, delete the old copy first or WordPress will list both. Projects, settings and connections are unaffected. Theme template overrides must move to the new folder name.

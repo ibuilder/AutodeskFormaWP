@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name:       Publisher for Autodesk Forma
- * Plugin URI:        https://github.com/ibuilder/AutodeskFormaWP
+ * Plugin URI:        https://ibuilder.github.io/AutodeskFormaWP/
  * Description:       Receives signed, normalized Autodesk Forma content from a trusted backend service and renders it as WordPress projects, metrics and assets.
- * Version:           1.2.0
+ * Version:           1.2.1
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            iBuilder
  * Author URI:        https://github.com/ibuilder
- * License:           GPL-2.0-or-later
+ * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       publisher-for-autodesk-forma
  * Domain Path:       /languages
@@ -22,7 +22,7 @@ if ( defined( 'FORMA_PUBLISHER_VERSION' ) ) {
 	return;
 }
 
-define( 'FORMA_PUBLISHER_VERSION', '1.2.0' );
+define( 'FORMA_PUBLISHER_VERSION', '1.2.1' );
 define( 'FORMA_PUBLISHER_FILE', __FILE__ );
 define( 'FORMA_PUBLISHER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FORMA_PUBLISHER_URL', plugin_dir_url( __FILE__ ) );
