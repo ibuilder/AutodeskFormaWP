@@ -1,0 +1,26 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "forma-publisher/project",
+	"version": "1.2.0",
+	"title": "Forma Project",
+	"category": "publisher-for-autodesk-forma",
+	"icon": "building",
+	"description": "Displays a single project published from Autodesk Forma.",
+	"keywords": [ "forma", "autodesk", "project" ],
+	"textdomain": "publisher-for-autodesk-forma",
+	"attributes": {
+		"projectId": { "type": "string", "default": "" },
+		"showMetrics": { "type": "boolean", "default": true },
+		"showAssets": { "type": "boolean", "default": true },
+		"showThumbnail": { "type": "boolean", "default": true },
+		"showContent": { "type": "boolean", "default": true }
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide" ],
+		"spacing": { "margin": true, "padding": true }
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

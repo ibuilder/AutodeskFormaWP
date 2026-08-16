@@ -65,7 +65,7 @@ require_once ABSPATH . 'wp-settings.php';
 PHP
 
 echo "== linking the plugin =="
-ln -s "${PLUGIN_DIR}/forma-publisher" "${WP_DIR}/wp-content/plugins/forma-publisher"
+ln -s "${PLUGIN_DIR}/publisher-for-autodesk-forma" "${WP_DIR}/wp-content/plugins/publisher-for-autodesk-forma"
 
 echo "== installing WordPress =="
 cd "${WP_DIR}"
@@ -77,7 +77,7 @@ php "${WP_CLI}" core install \
 	--admin_email=ci@example.com \
 	--skip-email
 
-php "${WP_CLI}" plugin activate forma-publisher
+php "${WP_CLI}" plugin activate publisher-for-autodesk-forma
 php "${WP_CLI}" core version
 
 echo "== running the integration suite =="

@@ -91,14 +91,14 @@ These apply to every view:
 
 ## Template overrides
 
-Copy any file from the plugin's `templates/` directory into a `forma-publisher` folder in your theme:
+Copy any file from the plugin's `templates/` directory into a `publisher-for-autodesk-forma` folder in your theme:
 
 ```
-your-theme/forma-publisher/project-list.php
-your-theme/forma-publisher/project.php
-your-theme/forma-publisher/metrics.php
-your-theme/forma-publisher/assets.php
-your-theme/forma-publisher/single-project.php
+your-theme/publisher-for-autodesk-forma/project-list.php
+your-theme/publisher-for-autodesk-forma/project.php
+your-theme/publisher-for-autodesk-forma/metrics.php
+your-theme/publisher-for-autodesk-forma/assets.php
+your-theme/publisher-for-autodesk-forma/single-project.php
 ```
 
 Resolution order is child theme, then parent theme, then the plugin. A theme-level `single-forma_project.php` in the theme root also takes precedence over the bundled single-project template.

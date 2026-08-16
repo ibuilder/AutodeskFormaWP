@@ -12,7 +12,7 @@ set -euo pipefail
 
 PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUTPUT_DIR="${1:-${PLUGIN_DIR}/build}"
-SLUG="forma-publisher"
+SLUG="publisher-for-autodesk-forma"
 
 # sed rather than grep -P: the latter is locale dependent and fails outright on
 # some runners.

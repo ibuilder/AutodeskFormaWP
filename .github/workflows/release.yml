@@ -34,7 +34,7 @@ jobs:
         run: |
           TAG="${GITHUB_REF_NAME#v}"
           VERSION="$(sed -n 's/^[[:space:]]*\*[[:space:]]*Version:[[:space:]]*\(.*\)$/\1/p' \
-            wordpress-plugin/forma-publisher/forma-publisher.php | head -n1 | tr -d '[:space:]')"
+            wordpress-plugin/publisher-for-autodesk-forma/publisher-for-autodesk-forma.php | head -n1 | tr -d '[:space:]')"
 
           if [ "${TAG}" != "${VERSION}" ]; then
             echo "Tag ${GITHUB_REF_NAME} does not match plugin version ${VERSION}." >&2
@@ -62,7 +62,7 @@ jobs:
           fi
 
           # Every path must sit under the plugin slug so it installs correctly.
-          if unzip -l "${ARCHIVE}" | awk 'NR>3 && $4 != "" && $4 !~ /^forma-publisher\// { print $4; found=1 } END { exit !found }'; then
+          if unzip -l "${ARCHIVE}" | awk 'NR>3 && $4 != "" && $4 !~ /^publisher-for-autodesk-forma\// { print $4; found=1 } END { exit !found }'; then
             echo "The archive contains paths outside the plugin directory." >&2
             exit 1
           fi
@@ -72,12 +72,12 @@ jobs:
       - name: Run Plugin Check against the built plugin
         uses: wordpress/plugin-check-action@v1
         with:
-          build-dir: './wordpress-plugin/forma-publisher'
+          build-dir: './wordpress-plugin/publisher-for-autodesk-forma'
 
       - name: Upload the archive as a build artifact
         uses: actions/upload-artifact@v5
         with:
-          name: forma-publisher-plugin
+          name: publisher-for-autodesk-forma-plugin
           path: dist/*.zip
           if-no-files-found: error
 

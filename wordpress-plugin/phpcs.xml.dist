@@ -2,7 +2,7 @@
 <ruleset name="Forma Publisher">
 	<description>WordPress coding standards for the Forma Publisher plugin.</description>
 
-	<file>forma-publisher</file>
+	<file>publisher-for-autodesk-forma</file>
 
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
@@ -50,7 +50,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="forma-publisher"/>
+				<element value="publisher-for-autodesk-forma"/>
 			</property>
 		</properties>
 	</rule>

@@ -12,7 +12,7 @@
 
 ## 1. WordPress plugin
 
-Copy `wordpress-plugin/forma-publisher` into `wp-content/plugins/` and activate it.
+Copy `wordpress-plugin/publisher-for-autodesk-forma` into `wp-content/plugins/` and activate it.
 
 Activation registers the content types, grants capabilities to the administrator and editor roles, writes default settings and flushes rewrite rules.
 

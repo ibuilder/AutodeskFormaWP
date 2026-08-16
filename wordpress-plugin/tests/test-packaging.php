@@ -14,7 +14,7 @@ namespace Forma_Publisher\Tests;
 
 group( 'Packaging: version consistency' );
 
-$plugin_file = FORMA_PUBLISHER_DIR . 'forma-publisher.php';
+$plugin_file = FORMA_PUBLISHER_DIR . 'publisher-for-autodesk-forma.php';
 $readme_file = FORMA_PUBLISHER_DIR . 'readme.txt';
 
 ok( 'the main plugin file is readable', is_readable( $plugin_file ) );
@@ -56,7 +56,7 @@ foreach ( array( 'Name', 'Description', 'Version', 'RequiresWP', 'RequiresPHP', 
 	ok( 'the header declares ' . $key, ! empty( $headers[ $key ] ), 'value: ' . wp_json_encode( isset( $headers[ $key ] ) ? $headers[ $key ] : null ) );
 }
 
-same( 'the text domain matches the plugin slug', 'forma-publisher', $headers['TextDomain'] );
+same( 'the text domain matches the plugin slug', 'publisher-for-autodesk-forma', $headers['TextDomain'] );
 same( 'the domain path is declared', '/languages', $headers['DomainPath'] );
 
 /*
@@ -132,7 +132,7 @@ foreach ( $forbidden as $entry ) {
 }
 
 $expected = array(
-	'forma-publisher.php',
+	'publisher-for-autodesk-forma.php',
 	'uninstall.php',
 	'readme.txt',
 	'includes',
@@ -160,7 +160,7 @@ ok(
 	FORMA_PUBLISHER_DIR . $domain_path
 );
 
-$pot = FORMA_PUBLISHER_DIR . $domain_path . '/forma-publisher.pot';
+$pot = FORMA_PUBLISHER_DIR . $domain_path . '/publisher-for-autodesk-forma.pot';
 
 ok( 'a translation template ships', is_readable( $pot ), $pot );
 
@@ -169,7 +169,7 @@ if ( is_readable( $pot ) ) {
 
 	ok(
 		'the translation template declares the plugin text domain',
-		false !== strpos( $pot_contents, 'forma-publisher' )
+		false !== strpos( $pot_contents, 'publisher-for-autodesk-forma' )
 	);
 
 	ok(
@@ -197,7 +197,7 @@ foreach ( array( 'project-list', 'project', 'metrics', 'assets' ) as $block ) {
 	}
 
 	same( 'the block name is namespaced for ' . $block, 'forma-publisher/' . $block, isset( $meta['name'] ) ? $meta['name'] : '' );
-	same( 'the block declares the plugin text domain for ' . $block, 'forma-publisher', isset( $meta['textdomain'] ) ? $meta['textdomain'] : '' );
+	same( 'the block declares the plugin text domain for ' . $block, 'publisher-for-autodesk-forma', isset( $meta['textdomain'] ) ? $meta['textdomain'] : '' );
 	same( 'the block version matches the plugin for ' . $block, FORMA_PUBLISHER_VERSION, isset( $meta['version'] ) ? $meta['version'] : '' );
 	ok( 'the block declares a render file for ' . $block, isset( $meta['render'] ) );
 

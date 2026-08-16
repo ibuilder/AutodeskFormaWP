@@ -4,6 +4,42 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0]
+
+Prepares the plugin for WordPress.org submission.
+
+### Changed
+
+- **Renamed to Publisher for Autodesk Forma**, slug `publisher-for-autodesk-forma`.
+  Guideline 17 forbids a slug that begins with someone else's trademark, and the
+  previous slug began with *Forma*. The text domain follows the slug, so every
+  translation call and `block.json` textdomain field changed and the `.pot` was
+  regenerated.
+- Block names, CSS classes, the REST namespace, option names, meta keys and the
+  PHP namespace are unchanged. None of them are required to match the slug, and
+  block names are written into saved post content — renaming them would break
+  existing pages.
+- The theme template override folder is now
+  `your-theme/publisher-for-autodesk-forma/`. Existing overrides must move.
+
+### Added
+
+- An **External services** section in `readme.txt` stating that there is no
+  third-party service, that every host contacted is one the administrator
+  entered, and exactly what is transmitted.
+- An FAQ entry disclaiming affiliation with Autodesk.
+- The GPL text now ships inside the plugin directory.
+- `Templates::output()`, which writes a template straight to the output buffer
+  instead of capturing it into a string only to echo it.
+
+### Fixed
+
+- `get_the_post_thumbnail()` output is now passed through `wp_kses_post()`
+  before echoing. Lossless for core-generated image markup.
+- Block asset manifests (`index.asset.php`) carry an `ABSPATH` guard.
+- The `Contributors` field named an account that does not exist on
+  WordPress.org, which would have failed review. It is now `blackrebel`.
+
 ## [1.1.0]
 
 ### Added

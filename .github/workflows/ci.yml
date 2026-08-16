@@ -54,7 +54,7 @@ jobs:
 
       - name: Lint every plugin file
         run: |
-          find wordpress-plugin/forma-publisher -name '*.php' -print0 \
+          find wordpress-plugin/publisher-for-autodesk-forma -name '*.php' -print0 \
             | xargs -0 -n1 -P4 php -l
 
   plugin-check:
@@ -66,7 +66,7 @@ jobs:
       - name: Run Plugin Check
         uses: wordpress/plugin-check-action@v1
         with:
-          build-dir: './wordpress-plugin/forma-publisher'
+          build-dir: './wordpress-plugin/publisher-for-autodesk-forma'
 
   plugin-integration:
     name: Plugin integration suite (PHP ${{ matrix.php }})

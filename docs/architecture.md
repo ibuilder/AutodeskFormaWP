@@ -34,7 +34,7 @@ The only component that holds secrets.
 | Reliability | Bounded retries with exponential backoff and jitter; non-retryable 4xx fail fast |
 | Idempotency | Stable content hash short-circuits no-op republishes before a request is sent |
 
-### WordPress plugin (`wordpress-plugin/forma-publisher/`)
+### WordPress plugin (`wordpress-plugin/publisher-for-autodesk-forma/`)
 
 A receiver, renderer and local cache — deliberately not the integration brain.
 

@@ -192,7 +192,7 @@ same( 'a non php template is refused', '', Templates::locate( 'project-list.html
 same( 'rendering an unknown template returns empty', '', Templates::render( 'does-not-exist.php' ) );
 
 // A theme override must take precedence over the bundled template.
-$override_dir = trailingslashit( get_stylesheet_directory() ) . 'forma-publisher';
+$override_dir = trailingslashit( get_stylesheet_directory() ) . 'publisher-for-autodesk-forma';
 
 if ( wp_mkdir_p( $override_dir ) ) {
 	$override_file = $override_dir . '/metrics.php';

@@ -1,0 +1,1264 @@
+# Copyright (C) 2026 iBuilder
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Publisher for Autodesk Forma 1.2.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/publisher-for-autodesk-forma\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-08-16T03:01:48+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: publisher-for-autodesk-forma\n"
+
+#. Plugin Name of the plugin
+#: publisher-for-autodesk-forma.php
+msgid "Publisher for Autodesk Forma"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: publisher-for-autodesk-forma.php
+msgid "https://github.com/ibuilder/AutodeskFormaWP"
+msgstr ""
+
+#. Description of the plugin
+#: publisher-for-autodesk-forma.php
+msgid "Receives signed, normalized Autodesk Forma content from a trusted backend service and renders it as WordPress projects, metrics and assets."
+msgstr ""
+
+#. Author of the plugin
+#: publisher-for-autodesk-forma.php
+msgid "iBuilder"
+msgstr ""
+
+#. Author URI of the plugin
+#: publisher-for-autodesk-forma.php
+msgid "https://github.com/ibuilder"
+msgstr ""
+
+#: includes/admin/class-admin.php:89
+msgid "Forma Publisher"
+msgstr ""
+
+#: includes/admin/class-admin.php:90
+#: includes/class-blocks.php:77
+msgid "Forma"
+msgstr ""
+
+#: includes/admin/class-admin.php:100
+#: includes/admin/class-admin.php:143
+msgid "Forma Publisher Settings"
+msgstr ""
+
+#: includes/admin/class-admin.php:101
+msgid "Settings"
+msgstr ""
+
+#: includes/admin/class-admin.php:109
+#: includes/admin/class-admin.php:362
+msgid "Backend Connections"
+msgstr ""
+
+#: includes/admin/class-admin.php:110
+msgid "Connections"
+msgstr ""
+
+#: includes/admin/class-admin.php:118
+#: includes/admin/class-admin.php:119
+#: includes/admin/class-admin.php:485
+msgid "Publish Log"
+msgstr ""
+
+#: includes/admin/class-admin.php:135
+msgid "You do not have permission to manage Forma Publisher settings."
+msgstr ""
+
+#: includes/admin/class-admin.php:148
+#: includes/admin/class-dashboard.php:233
+msgid "Ingest endpoint"
+msgstr ""
+
+#: includes/admin/class-admin.php:149
+msgid "Point the publishing backend at this signed endpoint:"
+msgstr ""
+
+#: includes/admin/class-admin.php:156
+msgid "Publishing"
+msgstr ""
+
+#: includes/admin/class-admin.php:160
+msgid "Editorial approval"
+msgstr ""
+
+#: includes/admin/class-admin.php:164
+msgid "Hold newly published projects for review instead of publishing them immediately"
+msgstr ""
+
+#: includes/admin/class-admin.php:170
+msgid "When a project was edited here"
+msgstr ""
+
+#: includes/admin/class-admin.php:180
+msgid "Applies when a project changed in WordPress after the last synchronization, so an incoming update would discard that work."
+msgstr ""
+
+#: includes/admin/class-admin.php:185
+msgid "Default post status"
+msgstr ""
+
+#: includes/admin/class-admin.php:191
+msgid "Draft"
+msgstr ""
+
+#: includes/admin/class-admin.php:192
+msgid "Pending review"
+msgstr ""
+
+#: includes/admin/class-admin.php:193
+#: includes/admin/class-dashboard.php:189
+msgid "Published"
+msgstr ""
+
+#: includes/admin/class-admin.php:194
+msgid "Private"
+msgstr ""
+
+#: includes/admin/class-admin.php:204
+msgid "Used when the incoming payload does not specify a status."
+msgstr ""
+
+#: includes/admin/class-admin.php:210
+msgid "Security"
+msgstr ""
+
+#: includes/admin/class-admin.php:214
+msgid "Transport"
+msgstr ""
+
+#: includes/admin/class-admin.php:218
+msgid "Reject publish requests that are not sent over HTTPS"
+msgstr ""
+
+#: includes/admin/class-admin.php:224
+msgid "Timestamp tolerance"
+msgstr ""
+
+#: includes/admin/class-admin.php:230
+msgid "seconds"
+msgstr ""
+
+#: includes/admin/class-admin.php:231
+msgid "Requests signed outside this window are rejected as stale."
+msgstr ""
+
+#: includes/admin/class-admin.php:237
+msgid "Media"
+msgstr ""
+
+#: includes/admin/class-admin.php:241
+msgid "Remote media import"
+msgstr ""
+
+#: includes/admin/class-admin.php:245
+msgid "Download featured images referenced in publish payloads"
+msgstr ""
+
+#: includes/admin/class-admin.php:247
+msgid "Images are only downloaded from hosts listed below."
+msgstr ""
+
+#: includes/admin/class-admin.php:252
+msgid "Allowed media hosts"
+msgstr ""
+
+#: includes/admin/class-admin.php:257
+msgid "One host name per line, for example developer.api.autodesk.com"
+msgstr ""
+
+#: includes/admin/class-admin.php:263
+msgid "Synchronization"
+msgstr ""
+
+#: includes/admin/class-admin.php:268
+msgid "Backend service URL"
+msgstr ""
+
+#: includes/admin/class-admin.php:274
+msgid "Base URL of the publishing backend, used to request scheduled refreshes."
+msgstr ""
+
+#: includes/admin/class-admin.php:279
+msgid "Refresh interval"
+msgstr ""
+
+#: includes/admin/class-admin.php:293
+msgid "Signing connection"
+msgstr ""
+
+#: includes/admin/class-admin.php:297
+msgid "— None —"
+msgstr ""
+
+#: includes/admin/class-admin.php:304
+msgid "Refresh requests sent to the backend are signed with this connection secret."
+msgstr ""
+
+#: includes/admin/class-admin.php:310
+msgid "Audit log"
+msgstr ""
+
+#: includes/admin/class-admin.php:314
+msgid "Logging"
+msgstr ""
+
+#: includes/admin/class-admin.php:318
+msgid "Record every publish, update, unpublish and archive request"
+msgstr ""
+
+#: includes/admin/class-admin.php:324
+msgid "Retention"
+msgstr ""
+
+#: includes/admin/class-admin.php:330
+msgid "days"
+msgstr ""
+
+#: includes/admin/class-admin.php:351
+#: includes/admin/class-admin.php:576
+#: includes/admin/class-admin.php:612
+msgid "You do not have permission to manage Forma Publisher connections."
+msgstr ""
+
+#: includes/admin/class-admin.php:368
+msgid "Connection created. Copy the shared secret now — it is not shown again."
+msgstr ""
+
+#: includes/admin/class-admin.php:370
+#: includes/admin/class-admin.php:398
+msgid "Key ID"
+msgstr ""
+
+#: includes/admin/class-admin.php:374
+msgid "Shared secret"
+msgstr ""
+
+#: includes/admin/class-admin.php:381
+msgid "Add a connection"
+msgstr ""
+
+#: includes/admin/class-admin.php:386
+#: includes/admin/class-admin.php:397
+msgid "Label"
+msgstr ""
+
+#: includes/admin/class-admin.php:389
+msgid "Create connection"
+msgstr ""
+
+#: includes/admin/class-admin.php:393
+msgid "Existing connections"
+msgstr ""
+
+#: includes/admin/class-admin.php:399
+msgid "Status"
+msgstr ""
+
+#: includes/admin/class-admin.php:400
+msgid "Last used"
+msgstr ""
+
+#: includes/admin/class-admin.php:401
+#: includes/admin/class-dashboard.php:389
+#: includes/admin/class-dashboard.php:434
+msgid "Actions"
+msgstr ""
+
+#: includes/admin/class-admin.php:407
+msgid "No connections have been created yet."
+msgstr ""
+
+#: includes/admin/class-admin.php:418
+msgid "Defined in wp-config.php"
+msgstr ""
+
+#: includes/admin/class-admin.php:420
+msgid "Enabled"
+msgstr ""
+
+#: includes/admin/class-admin.php:422
+#: includes/admin/class-dashboard.php:253
+#: includes/class-scheduler.php:65
+msgid "Disabled"
+msgstr ""
+
+#: includes/admin/class-admin.php:429
+msgid "Never"
+msgstr ""
+
+#: includes/admin/class-admin.php:442
+msgid "Managed in code"
+msgstr ""
+
+#: includes/admin/class-admin.php:447
+msgid "Disable"
+msgstr ""
+
+#: includes/admin/class-admin.php:449
+msgid "Enable"
+msgstr ""
+
+#: includes/admin/class-admin.php:455
+msgid "Delete"
+msgstr ""
+
+#: includes/admin/class-admin.php:476
+msgid "You do not have permission to view the Forma Publisher log."
+msgstr ""
+
+#: includes/admin/class-admin.php:492
+#: includes/admin/class-dashboard.php:314
+msgid "When"
+msgstr ""
+
+#: includes/admin/class-admin.php:493
+#: includes/admin/class-dashboard.php:315
+msgid "Operation"
+msgstr ""
+
+#: includes/admin/class-admin.php:494
+#: includes/admin/class-dashboard.php:316
+msgid "Result"
+msgstr ""
+
+#: includes/admin/class-admin.php:495
+#: includes/admin/class-admin.php:699
+#: includes/admin/class-admin.php:747
+#: includes/admin/class-dashboard.php:317
+msgid "Source ID"
+msgstr ""
+
+#: includes/admin/class-admin.php:496
+#: includes/admin/class-admin.php:703
+msgid "Connection"
+msgstr ""
+
+#: includes/admin/class-admin.php:497
+msgid "Details"
+msgstr ""
+
+#: includes/admin/class-admin.php:503
+#: includes/admin/class-dashboard.php:309
+msgid "No publish activity has been recorded yet."
+msgstr ""
+
+#: includes/admin/class-admin.php:527
+msgid "Open project"
+msgstr ""
+
+#: includes/admin/class-admin.php:547
+msgid "&laquo; Previous"
+msgstr ""
+
+#: includes/admin/class-admin.php:548
+msgid "Next &raquo;"
+msgstr ""
+
+#: includes/admin/class-admin.php:561
+msgid "Delete all log entries"
+msgstr ""
+
+#: includes/admin/class-admin.php:661
+msgid "You do not have permission to manage the Forma Publisher log."
+msgstr ""
+
+#: includes/admin/class-admin.php:681
+msgid "Forma synchronization"
+msgstr ""
+
+#: includes/admin/class-admin.php:700
+msgid "Source system"
+msgstr ""
+
+#: includes/admin/class-admin.php:701
+msgid "Sync mode"
+msgstr ""
+
+#: includes/admin/class-admin.php:702
+msgid "Publish state"
+msgstr ""
+
+#: includes/admin/class-admin.php:704
+msgid "Last synchronized"
+msgstr ""
+
+#: includes/admin/class-admin.php:729
+#: templates/project.php:89
+msgid "View in Autodesk Forma"
+msgstr ""
+
+#: includes/admin/class-admin.php:748
+msgid "Last synced"
+msgstr ""
+
+#: includes/admin/class-admin.php:749
+#: blocks/metrics/index.js:61
+msgid "Metrics"
+msgstr ""
+
+#: includes/admin/class-admin.php:846
+msgid "Connection created."
+msgstr ""
+
+#: includes/admin/class-admin.php:847
+msgid "Connection enabled."
+msgstr ""
+
+#: includes/admin/class-admin.php:848
+msgid "Connection disabled."
+msgstr ""
+
+#: includes/admin/class-admin.php:849
+msgid "Connection deleted."
+msgstr ""
+
+#: includes/admin/class-admin.php:850
+msgid "Publish log cleared."
+msgstr ""
+
+#: includes/admin/class-admin.php:851
+msgid "Please provide a label for the connection."
+msgstr ""
+
+#: includes/admin/class-admin.php:852
+msgid "That connection could not be found."
+msgstr ""
+
+#: includes/admin/class-admin.php:877
+msgid "Success"
+msgstr ""
+
+#: includes/admin/class-admin.php:879
+msgid "Error"
+msgstr ""
+
+#: includes/admin/class-admin.php:881
+msgid "Skipped"
+msgstr ""
+
+#: includes/admin/class-admin.php:883
+msgid "Unknown"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:79
+#: includes/admin/class-dashboard.php:155
+msgid "Forma Publisher Overview"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:80
+msgid "Overview"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:88
+msgid "Review"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:100
+#: includes/admin/class-dashboard.php:370
+msgid "Editorial Review"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:117
+msgid "You do not have permission to view Forma Publisher."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:160
+msgid "No enabled connection exists yet, so no backend can publish to this site."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:162
+msgid "Create one"
+msgstr ""
+
+#. translators: %s: number of items awaiting review.
+#: includes/admin/class-dashboard.php:174
+#, php-format
+msgid "%s project needs editorial attention."
+msgid_plural "%s projects need editorial attention."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-dashboard.php:179
+msgid "Review now"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:193
+msgid "Awaiting review"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:197
+msgid "Drafts"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:201
+msgid "Enabled connections"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:205
+msgid "Recent failures"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:222
+msgid "Most recent failure:"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:229
+msgid "Pipeline"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:237
+msgid "Last accepted publish"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:243
+msgid "No publish has been accepted yet."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:249
+msgid "Scheduled refresh"
+msgstr ""
+
+#. translators: 1: interval name, 2: formatted date and time.
+#: includes/admin/class-dashboard.php:257
+#, php-format
+msgid "%1$s, next run %2$s"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:262
+msgid "Enabled but not scheduled. Visit any admin page to reschedule."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:268
+msgid "Log cleanup"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:274
+msgid "Not scheduled"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:280
+msgid "Local edit policy"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:291
+msgid "WP-Cron"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:295
+msgid "Disabled in configuration. Ensure a system cron calls wp-cron.php."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:297
+msgid "Enabled. It only fires on site traffic, so a quiet site may refresh late."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:307
+msgid "Recent activity"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:338
+msgid "View the full publish log"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:356
+msgid "You do not have permission to review Forma projects."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:375
+msgid "Updates held because the project was edited here"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:377
+msgid "These projects changed in WordPress after the last synchronization, so the incoming update was not applied automatically."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:381
+msgid "Nothing is waiting. Every project matches its published version."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:386
+#: includes/admin/class-dashboard.php:432
+#: blocks/assets/index.js:48
+#: blocks/metrics/index.js:47
+#: blocks/project/index.js:47
+#: blocks/project/index.js:61
+msgid "Project"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:387
+msgid "Incoming title"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:388
+msgid "Held since"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:410
+msgid "Apply update"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:413
+msgid "Keep local edits"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:424
+msgid "Projects awaiting approval"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:427
+msgid "No projects are pending review."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:433
+msgid "Received"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:449
+msgid "Approve and publish"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:453
+msgid "Preview"
+msgstr ""
+
+#: includes/admin/class-dashboard.php:480
+msgid "You do not have permission to review that project."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:510
+msgid "You do not have permission to publish Forma projects."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:588
+msgid "The held update was applied."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:589
+msgid "The held update was discarded and the local version kept."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:590
+msgid "The project was published."
+msgstr ""
+
+#: includes/admin/class-dashboard.php:591
+msgid "That review action could not be completed."
+msgstr ""
+
+#. translators: 1: operation name, 2: upstream source identifier.
+#: includes/class-audit-log.php:82
+#, php-format
+msgid "%1$s · %2$s"
+msgstr ""
+
+#: includes/class-ingest-service.php:77
+msgid "The payload does not contain a project source id."
+msgstr ""
+
+#: includes/class-ingest-service.php:99
+msgid "The requested operation is not supported."
+msgstr ""
+
+#: includes/class-ingest-service.php:172
+msgid "Payload matches the stored version; nothing to update."
+msgstr ""
+
+#: includes/class-ingest-service.php:189
+msgid "The project was edited in WordPress, so the update was discarded."
+msgstr ""
+
+#: includes/class-ingest-service.php:202
+msgid "The project was edited in WordPress, so the update is waiting for review."
+msgstr ""
+
+#: includes/class-ingest-service.php:293
+msgid "There is no update waiting for review on that project."
+msgstr ""
+
+#: includes/class-ingest-service.php:569
+msgid "Remote media import is disabled; the featured image was skipped."
+msgstr ""
+
+#: includes/class-ingest-service.php:576
+msgid "The featured image URL is not valid."
+msgstr ""
+
+#: includes/class-ingest-service.php:585
+msgid "The featured image host is not on the allowed list; the image was skipped."
+msgstr ""
+
+#: includes/class-ingest-service.php:655
+#: includes/class-ingest-service.php:696
+#: includes/rest/class-rest-routes.php:284
+msgid "No published project matches that source id."
+msgstr ""
+
+#: includes/class-ingest-service.php:711
+msgid "The project could not be moved to the trash."
+msgstr ""
+
+#: includes/class-post-types.php:83
+msgctxt "post type general name"
+msgid "Forma Projects"
+msgstr ""
+
+#: includes/class-post-types.php:84
+msgctxt "post type singular name"
+msgid "Forma Project"
+msgstr ""
+
+#: includes/class-post-types.php:85
+msgctxt "admin menu"
+msgid "Forma Projects"
+msgstr ""
+
+#: includes/class-post-types.php:86
+msgid "Add New Forma Project"
+msgstr ""
+
+#: includes/class-post-types.php:87
+msgid "Edit Forma Project"
+msgstr ""
+
+#: includes/class-post-types.php:88
+msgid "New Forma Project"
+msgstr ""
+
+#: includes/class-post-types.php:89
+msgid "View Forma Project"
+msgstr ""
+
+#: includes/class-post-types.php:90
+msgid "Search Forma Projects"
+msgstr ""
+
+#: includes/class-post-types.php:91
+msgid "No Forma projects found."
+msgstr ""
+
+#: includes/class-post-types.php:92
+msgid "No Forma projects found in Trash."
+msgstr ""
+
+#: includes/class-post-types.php:93
+msgid "All Projects"
+msgstr ""
+
+#: includes/class-post-types.php:95
+msgid "Projects published from Autodesk Forma."
+msgstr ""
+
+#: includes/class-post-types.php:120
+msgctxt "post type general name"
+msgid "Forma Assets"
+msgstr ""
+
+#: includes/class-post-types.php:121
+msgctxt "post type singular name"
+msgid "Forma Asset"
+msgstr ""
+
+#: includes/class-post-types.php:122
+msgctxt "admin menu"
+msgid "Forma Assets"
+msgstr ""
+
+#: includes/class-post-types.php:123
+msgid "Edit Forma Asset"
+msgstr ""
+
+#: includes/class-post-types.php:124
+msgid "Search Forma Assets"
+msgstr ""
+
+#: includes/class-post-types.php:125
+msgid "No Forma assets found."
+msgstr ""
+
+#: includes/class-post-types.php:126
+msgid "All Assets"
+msgstr ""
+
+#: includes/class-post-types.php:128
+msgid "Files and images published from Autodesk Forma."
+msgstr ""
+
+#: includes/class-post-types.php:150
+msgctxt "post type general name"
+msgid "Forma Publish Log"
+msgstr ""
+
+#: includes/class-post-types.php:151
+msgctxt "post type singular name"
+msgid "Forma Publish Log Entry"
+msgstr ""
+
+#: includes/class-post-types.php:153
+msgid "Audit trail of inbound publish operations."
+msgstr ""
+
+#: includes/class-scheduler.php:66
+msgid "Hourly"
+msgstr ""
+
+#: includes/class-scheduler.php:67
+msgid "Twice daily"
+msgstr ""
+
+#: includes/class-scheduler.php:68
+msgid "Daily"
+msgstr ""
+
+#: includes/class-scheduler.php:161
+msgid "The configured sync connection is missing or disabled."
+msgstr ""
+
+#. translators: %d: HTTP status code returned by the backend service.
+#: includes/class-scheduler.php:221
+#, php-format
+msgid "Backend responded with HTTP %d."
+msgstr ""
+
+#: includes/class-settings.php:139
+msgid "Hold the update for review"
+msgstr ""
+
+#: includes/class-settings.php:140
+msgid "Keep the local edits and discard the update"
+msgstr ""
+
+#: includes/class-settings.php:141
+msgid "Overwrite the local edits"
+msgstr ""
+
+#: includes/class-signature.php:189
+msgid "Publish requests must be sent over HTTPS."
+msgstr ""
+
+#: includes/class-signature.php:202
+msgid "The request is missing one or more signature headers."
+msgstr ""
+
+#: includes/class-signature.php:213
+#: includes/class-signature.php:245
+#: includes/class-signature.php:264
+#: includes/rest/class-rest-routes.php:190
+#: includes/rest/class-rest-routes.php:236
+#: includes/rest/class-rest-routes.php:273
+msgid "The request signature could not be verified."
+msgstr ""
+
+#: includes/class-signature.php:221
+msgid "The request timestamp is not a valid Unix timestamp."
+msgstr ""
+
+#: includes/class-signature.php:232
+msgid "The request timestamp is outside the accepted tolerance."
+msgstr ""
+
+#: includes/class-signature.php:279
+msgid "This request was already processed."
+msgstr ""
+
+#: includes/class-signature.php:314
+msgid "Too many unauthenticated requests. Please retry shortly."
+msgstr ""
+
+#: includes/class-signature.php:460
+msgid "Too many publish requests. Please retry shortly."
+msgstr ""
+
+#: includes/class-taxonomies.php:59
+msgctxt "taxonomy general name"
+msgid "Forma Tags"
+msgstr ""
+
+#: includes/class-taxonomies.php:60
+msgctxt "taxonomy singular name"
+msgid "Forma Tag"
+msgstr ""
+
+#: includes/class-taxonomies.php:61
+msgid "Search Forma Tags"
+msgstr ""
+
+#: includes/class-taxonomies.php:62
+msgid "All Forma Tags"
+msgstr ""
+
+#: includes/class-taxonomies.php:63
+msgid "Edit Forma Tag"
+msgstr ""
+
+#: includes/class-taxonomies.php:64
+msgid "Add New Forma Tag"
+msgstr ""
+
+#: includes/class-taxonomies.php:88
+msgctxt "taxonomy general name"
+msgid "Forma Statuses"
+msgstr ""
+
+#: includes/class-taxonomies.php:89
+msgctxt "taxonomy singular name"
+msgid "Forma Status"
+msgstr ""
+
+#: includes/class-taxonomies.php:90
+msgid "Search Forma Statuses"
+msgstr ""
+
+#: includes/class-taxonomies.php:91
+msgid "All Forma Statuses"
+msgstr ""
+
+#: includes/class-taxonomies.php:92
+msgid "Edit Forma Status"
+msgstr ""
+
+#: includes/class-taxonomies.php:93
+msgid "Add New Forma Status"
+msgstr ""
+
+#: includes/render/class-renderer.php:116
+#: includes/render/class-renderer.php:157
+#: includes/render/class-renderer.php:220
+msgid "That Forma project could not be found."
+msgstr ""
+
+#: includes/render/class-renderer.php:338
+msgid "Image"
+msgstr ""
+
+#: includes/render/class-renderer.php:339
+msgid "Document"
+msgstr ""
+
+#: includes/render/class-renderer.php:340
+msgid "Model"
+msgstr ""
+
+#: includes/render/class-renderer.php:341
+msgid "Dataset"
+msgstr ""
+
+#: includes/render/class-renderer.php:342
+msgid "Link"
+msgstr ""
+
+#: includes/render/class-renderer.php:347
+msgid "File"
+msgstr ""
+
+#: templates/assets.php:21
+msgid "No assets have been published for this project."
+msgstr ""
+
+#: templates/metrics.php:23
+msgid "No metrics have been published for this project."
+msgstr ""
+
+#: templates/metrics.php:44
+msgid "Published project metrics"
+msgstr ""
+
+#: templates/metrics.php:47
+msgid "Metric"
+msgstr ""
+
+#: templates/metrics.php:48
+msgid "Value"
+msgstr ""
+
+#: templates/project-list.php:28
+msgid "No Forma projects have been published yet."
+msgstr ""
+
+#. translators: %s: formatted date and time of the last synchronization.
+#: templates/project.php:101
+#, php-format
+msgid "Last synchronized %s"
+msgstr ""
+
+#: blocks/assets/index.js:41
+msgid "Forma Assets"
+msgstr ""
+
+#: blocks/assets/index.js:42
+msgid "Enter a project post ID or an Autodesk Forma source ID to list its assets."
+msgstr ""
+
+#: blocks/assets/index.js:62
+msgid "Assets"
+msgstr ""
+
+#: blocks/assets/index.js:64
+#: blocks/metrics/index.js:63
+#: blocks/project/index.js:63
+msgid "Post ID or source ID"
+msgstr ""
+
+#: blocks/assets/index.js:69
+msgid "Only show"
+msgstr ""
+
+#: blocks/assets/index.js:72
+msgid "All kinds"
+msgstr ""
+
+#: blocks/assets/index.js:73
+msgid "Images"
+msgstr ""
+
+#: blocks/assets/index.js:74
+msgid "Documents"
+msgstr ""
+
+#: blocks/assets/index.js:75
+msgid "Models"
+msgstr ""
+
+#: blocks/assets/index.js:76
+msgid "Datasets"
+msgstr ""
+
+#: blocks/assets/index.js:77
+msgid "Links"
+msgstr ""
+
+#: blocks/assets/index.js:82
+msgid "Maximum assets"
+msgstr ""
+
+#: blocks/metrics/index.js:40
+msgid "Forma Metrics"
+msgstr ""
+
+#: blocks/metrics/index.js:41
+msgid "Enter a project post ID or an Autodesk Forma source ID to display its metrics."
+msgstr ""
+
+#: blocks/metrics/index.js:68
+msgid "Layout"
+msgstr ""
+
+#: blocks/metrics/index.js:71
+msgid "Table"
+msgstr ""
+
+#: blocks/metrics/index.js:72
+msgid "Cards"
+msgstr ""
+
+#: blocks/metrics/index.js:77
+msgid "Filter by category"
+msgstr ""
+
+#: blocks/metrics/index.js:78
+msgid "Comma separated list of metric categories."
+msgstr ""
+
+#: blocks/metrics/index.js:83
+msgid "Filter by metric keys"
+msgstr ""
+
+#: blocks/metrics/index.js:84
+msgid "Comma separated list of metric keys."
+msgstr ""
+
+#: blocks/project-list/index.js:41
+msgid "Query"
+msgstr ""
+
+#: blocks/project-list/index.js:43
+msgid "Number of projects"
+msgstr ""
+
+#: blocks/project-list/index.js:50
+msgid "Columns"
+msgstr ""
+
+#: blocks/project-list/index.js:57
+msgid "Order by"
+msgstr ""
+
+#: blocks/project-list/index.js:60
+msgid "Date"
+msgstr ""
+
+#: blocks/project-list/index.js:61
+msgid "Title"
+msgstr ""
+
+#: blocks/project-list/index.js:62
+msgid "Last modified"
+msgstr ""
+
+#: blocks/project-list/index.js:63
+msgid "Menu order"
+msgstr ""
+
+#: blocks/project-list/index.js:64
+msgid "Random"
+msgstr ""
+
+#: blocks/project-list/index.js:69
+msgid "Order"
+msgstr ""
+
+#: blocks/project-list/index.js:72
+msgid "Descending"
+msgstr ""
+
+#: blocks/project-list/index.js:73
+msgid "Ascending"
+msgstr ""
+
+#: blocks/project-list/index.js:78
+msgid "Filter by tag slugs"
+msgstr ""
+
+#: blocks/project-list/index.js:79
+msgid "Comma separated list of Forma tag slugs."
+msgstr ""
+
+#: blocks/project-list/index.js:84
+msgid "Filter by status slugs"
+msgstr ""
+
+#: blocks/project-list/index.js:85
+msgid "Comma separated list of Forma status slugs."
+msgstr ""
+
+#: blocks/project-list/index.js:92
+msgid "Display"
+msgstr ""
+
+#: blocks/project-list/index.js:94
+msgid "Show thumbnails"
+msgstr ""
+
+#: blocks/project-list/index.js:99
+msgid "Show excerpts"
+msgstr ""
+
+#: blocks/project-list/index.js:104
+msgid "Show top metrics"
+msgstr ""
+
+#: blocks/project/index.js:40
+msgid "Forma Project"
+msgstr ""
+
+#: blocks/project/index.js:41
+msgid "Enter a project post ID or an Autodesk Forma source ID to display."
+msgstr ""
+
+#: blocks/project/index.js:68
+msgid "Show thumbnail"
+msgstr ""
+
+#: blocks/project/index.js:73
+msgid "Show description"
+msgstr ""
+
+#: blocks/project/index.js:78
+msgid "Show metrics"
+msgstr ""
+
+#: blocks/project/index.js:83
+msgid "Show assets"
+msgstr ""
+
+#: blocks/assets/block.json
+msgctxt "block title"
+msgid "Forma Assets"
+msgstr ""
+
+#: blocks/assets/block.json
+msgctxt "block description"
+msgid "Displays the files and images published for a Forma project."
+msgstr ""
+
+#: blocks/assets/block.json
+#: blocks/metrics/block.json
+#: blocks/project-list/block.json
+#: blocks/project/block.json
+msgctxt "block keyword"
+msgid "forma"
+msgstr ""
+
+#: blocks/assets/block.json
+#: blocks/metrics/block.json
+#: blocks/project-list/block.json
+#: blocks/project/block.json
+msgctxt "block keyword"
+msgid "autodesk"
+msgstr ""
+
+#: blocks/assets/block.json
+msgctxt "block keyword"
+msgid "assets"
+msgstr ""
+
+#: blocks/assets/block.json
+msgctxt "block keyword"
+msgid "files"
+msgstr ""
+
+#: blocks/metrics/block.json
+msgctxt "block title"
+msgid "Forma Metrics"
+msgstr ""
+
+#: blocks/metrics/block.json
+msgctxt "block description"
+msgid "Displays the published analysis metrics for a Forma project."
+msgstr ""
+
+#: blocks/metrics/block.json
+msgctxt "block keyword"
+msgid "metrics"
+msgstr ""
+
+#: blocks/project-list/block.json
+msgctxt "block title"
+msgid "Forma Project List"
+msgstr ""
+
+#: blocks/project-list/block.json
+msgctxt "block description"
+msgid "Displays a grid of projects published from Autodesk Forma."
+msgstr ""
+
+#: blocks/project-list/block.json
+msgctxt "block keyword"
+msgid "projects"
+msgstr ""
+
+#: blocks/project/block.json
+msgctxt "block title"
+msgid "Forma Project"
+msgstr ""
+
+#: blocks/project/block.json
+msgctxt "block description"
+msgid "Displays a single project published from Autodesk Forma."
+msgstr ""
+
+#: blocks/project/block.json
+msgctxt "block keyword"
+msgid "project"
+msgstr ""

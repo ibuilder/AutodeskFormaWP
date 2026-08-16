@@ -30,7 +30,7 @@ Three properties fall out of this split:
 |---|---|---|
 | Forma embedded extension | [`forma-extension/`](forma-extension) | TypeScript, Vite, `forma-embedded-view-sdk` |
 | Backend service | [`backend/`](backend) | Node 22+, TypeScript, Express, Zod |
-| WordPress plugin | [`wordpress-plugin/forma-publisher/`](wordpress-plugin/forma-publisher) | PHP 7.4+, WordPress 6.4+ |
+| WordPress plugin | [`wordpress-plugin/publisher-for-autodesk-forma/`](wordpress-plugin/publisher-for-autodesk-forma) | PHP 7.4+, WordPress 6.4+ |
 
 ## Status
 
@@ -53,7 +53,7 @@ The Autodesk client is covered by contract tests against recorded Autodesk Platf
 
 ### 1. WordPress plugin
 
-Copy `wordpress-plugin/forma-publisher` into `wp-content/plugins/` and activate it. Then:
+Copy `wordpress-plugin/publisher-for-autodesk-forma` into `wp-content/plugins/` and activate it. Then:
 
 1. Go to **Forma → Connections** and create a connection.
 2. Copy the key ID and shared secret. **The secret is shown once.**
@@ -127,7 +127,7 @@ Four blocks (in the **Forma** category) and four matching shortcodes:
 | `[forma_metrics project="123"]` | Forma Metrics | Analysis metrics, as a table or cards |
 | `[forma_assets project="123"]` | Forma Assets | Published files and images |
 
-Every template can be overridden from a theme — copy any file out of the plugin's `templates/` directory into `your-theme/forma-publisher/`.
+Every template can be overridden from a theme — copy any file out of the plugin's `templates/` directory into `your-theme/publisher-for-autodesk-forma/`.
 
 ## Security
 

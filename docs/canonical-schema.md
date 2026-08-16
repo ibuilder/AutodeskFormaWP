@@ -7,7 +7,7 @@ The canonical schema is the contract between the backend and WordPress. It is de
 It is defined twice, once per language, and both definitions are tested:
 
 - **Backend:** Zod schemas in [`backend/src/canonical/schema.ts`](../backend/src/canonical/schema.ts)
-- **WordPress:** JSON Schema REST arguments in [`wordpress-plugin/forma-publisher/includes/class-schema.php`](../wordpress-plugin/forma-publisher/includes/class-schema.php)
+- **WordPress:** JSON Schema REST arguments in [`wordpress-plugin/publisher-for-autodesk-forma/includes/class-schema.php`](../wordpress-plugin/publisher-for-autodesk-forma/includes/class-schema.php)
 
 ## Envelope
 

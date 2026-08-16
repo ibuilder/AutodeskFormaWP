@@ -189,7 +189,7 @@ $survivor = wp_insert_post(
 $audit->log( array( 'operation' => 'publish', 'source_id' => 'urn:uninstall:probe' ) );
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-	define( 'WP_UNINSTALL_PLUGIN', 'forma-publisher/forma-publisher.php' );
+	define( 'WP_UNINSTALL_PLUGIN', 'publisher-for-autodesk-forma/publisher-for-autodesk-forma.php' );
 }
 
 require FORMA_PUBLISHER_DIR . 'uninstall.php';
