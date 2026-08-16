@@ -60,7 +60,7 @@ A systemd unit:
 
 ```ini
 [Unit]
-Description=Forma Publisher backend
+Description=Publisher for Autodesk Forma backend
 After=network-online.target
 
 [Service]

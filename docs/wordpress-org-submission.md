@@ -123,8 +123,10 @@ No, and the readme says so explicitly in the FAQ.
 - [x] Integration suite: 337 single site, 360 multisite
 - [x] Disclose external services in the readme
 - [x] Ship the GPL text inside the plugin
+- [x] Generate the directory icon and banner — `php bin/build-assets.php`
 - [ ] Confirm `Tested up to` still matches the current WordPress release on the day you submit
 - [ ] Build the archive with `./bin/build-zip.sh` and upload that file
+- [ ] After approval: capture screenshots and commit `assets/` to SVN — see [`wordpress-plugin/assets/README.md`](../wordpress-plugin/assets/README.md)
 
 ## What has and has not been verified
 

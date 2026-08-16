@@ -1,6 +1,6 @@
 # Overview
 
-Forma Publisher moves content from **Autodesk Forma** into **WordPress** as curated, snapshot-friendly project pages.
+Publisher for Autodesk Forma moves content from **Autodesk Forma** into **WordPress** as curated, snapshot-friendly project pages.
 
 It is deliberately not a plugin that queries Autodesk when a visitor arrives. Forma is the source environment where someone selects content and triggers a publish; a backend service you control holds every Autodesk credential; WordPress receives a finished, signed snapshot and renders it locally.
 

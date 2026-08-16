@@ -154,8 +154,8 @@ function layout( { title, current, body, headings } ) {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>${ escapeHtml( title ) } — Forma Publisher</title>
-<meta name="description" content="Documentation for Forma Publisher, a source-driven publishing workflow from Autodesk Forma to WordPress." />
+<title>${ escapeHtml( title ) } — Publisher for Autodesk Forma</title>
+<meta name="description" content="Documentation for Publisher for Autodesk Forma, a source-driven publishing workflow from Autodesk Forma to WordPress." />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏗️</text></svg>" />
 <link rel="stylesheet" href="docs.css" />
 </head>
@@ -163,7 +163,7 @@ function layout( { title, current, body, headings } ) {
 <a class="skip" href="#content">Skip to content</a>
 <header class="topbar">
 	<div class="topbar-inner">
-		<a class="brand" href="index.html">Forma&nbsp;Publisher <span>docs</span></a>
+		<a class="brand" href="index.html">Publisher for Autodesk&nbsp;Forma <span>docs</span></a>
 		<nav class="topnav">
 			<a href="../index.html">Home</a>
 			<a href="${ REPO }" rel="noopener">GitHub</a>
