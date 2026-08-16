@@ -42,6 +42,10 @@ Every shortcode has an equivalent block in the **Forma** block category.
 * Remote media import is disabled by default and, when enabled, only downloads from an explicit host allow list.
 * Publishing, log access and settings are gated behind dedicated capabilities.
 
+**Do I need anything besides this plugin?**
+
+Yes. This plugin is the receiving half of a two-part system. The companion backend service holds the Autodesk credentials and pushes content here. It is included in the same project, is GPL licensed, is free, and you run it on your own infrastructure — there is no paid tier, no hosted service and no account to buy. The plugin itself is fully functional on its own terms: it receives, stores, renders and audits content, and every one of those parts works without the backend present.
+
 == Installation ==
 
 1. Upload the `forma-publisher` folder to `/wp-content/plugins/`, or install the plugin through the WordPress plugin screen.
@@ -51,6 +55,31 @@ Every shortcode has an equivalent block in the **Forma** block category.
 5. Optionally define connections in `wp-config.php` instead of the database:
 
 `define( 'FORMA_PUBLISHER_CONNECTIONS', array( 'fp_yourkeyid' => 'your-shared-secret' ) );`
+
+== External services ==
+
+This plugin contacts **no service operated by the plugin author**. It has no telemetry, no licence check and no update server. Out of the box, with default settings, it makes no outbound requests at all.
+
+It can make outbound requests in exactly two cases, both of which are off by default and both of which go only to a host you enter yourself:
+
+**1. Scheduled refresh to your own backend service**
+
+Only when you set a backend URL, choose a refresh interval other than Disabled, and select a signing connection under **Forma → Settings**. WordPress then sends a signed POST to `{your backend URL}/api/refresh` on that schedule.
+
+* What is sent: your site URL, the request timestamp, and the canonical schema version. Nothing else, and no personal data.
+* Where it goes: the URL you entered. The backend is the companion service in this project's repository, which you host. It is GPL licensed and free.
+* Why: it asks your backend to re-publish projects you marked for synchronization.
+
+**2. Downloading a featured image**
+
+Only when you switch on **Remote media import** and add host names to the allowed list. WordPress then downloads images referenced in an incoming payload, and only from hosts on that list. There is no wildcard, and with the list empty every image is skipped.
+
+* What is sent: an ordinary HTTP GET for the image. No site data is transmitted.
+* Where it goes: the hosts you listed.
+
+Both features are disabled by default. If you never enable them, this plugin makes no external requests.
+
+The plugin never contacts Autodesk. Autodesk credentials are held only by the backend service you run.
 
 == Frequently Asked Questions ==
 
@@ -77,6 +106,10 @@ Options, connections, capabilities, scheduled events and log entries are removed
 = Does it work on multisite? =
 
 Yes. Each site keeps its own settings, connections and content, and the uninstall routine cleans up every site in the network.
+
+= Is this an official Autodesk plugin? =
+
+No. This is an independent, community developed plugin. It is not affiliated with, endorsed by, or sponsored by Autodesk, Inc. Autodesk and Autodesk Forma are trademarks of Autodesk, Inc., used here only to describe what the plugin interoperates with.
 
 == Changelog ==
 
