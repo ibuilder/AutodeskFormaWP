@@ -2,7 +2,7 @@
 
 An audit of this plugin against the [detailed plugin guidelines](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/), the [Plugin Check](https://wordpress.org/plugins/plugin-check/) tool, and current advice from the [plugins team](https://make.wordpress.org/plugins/).
 
-**Status: two blockers remain, both non-code.** Everything else passes.
+**Status: one blocker remains — the plugin slug.** Everything else passes.
 
 ## Blockers
 
@@ -25,13 +25,19 @@ The slug is also the text domain, so the script updates every translation call a
 
 The only exception to this blocker is documented written permission from Autodesk.
 
-### 2. The Contributors field is not a real account
+### 2. The Contributors field — resolved
 
-`readme.txt` declares `Contributors: ibuilder`. `https://profiles.wordpress.org/ibuilder/` returns **404**, so that account does not exist.
+`readme.txt` previously declared `Contributors: ibuilder`, and
+`https://profiles.wordpress.org/ibuilder/` returns 404. That account does not
+exist, which fails review.
 
-Contributors must be existing WordPress.org usernames — they become the listed authors and control the plugin. A non-existent username fails review.
+Now set to **`blackrebel`**, verified against
+[profiles.wordpress.org/blackrebel](https://profiles.wordpress.org/blackrebel/)
+— display name *iBuilder*, member since 2012, three published plugins.
 
-**Fix:** register at [login.wordpress.org](https://login.wordpress.org/register) if needed, then set the field to that exact username. Note that a WordPress.org account is separate from a GitHub account.
+Contributors must be existing WordPress.org usernames, since they become the
+listed authors and control the plugin. Note that a WordPress.org account is
+separate from a GitHub account, which is why the two differ here.
 
 ## Passing
 
@@ -85,7 +91,7 @@ No, and the readme says so explicitly in the FAQ.
 ## Pre-submission checklist
 
 - [ ] Rename the slug (blocker 1)
-- [ ] Set a real WordPress.org username in `Contributors` (blocker 2)
+- [x] Set a real WordPress.org username in `Contributors` — `blackrebel`, verified
 - [ ] Regenerate the `.pot` after renaming, so the template matches the new text domain
 - [ ] Re-run `vendor/bin/phpcs`
 - [ ] Re-run the integration suite and Plugin Check against the renamed plugin
